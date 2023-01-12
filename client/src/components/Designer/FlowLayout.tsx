@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from "react";
 
 import ReactFlow, {
   addEdge,
@@ -13,49 +13,80 @@ import ReactFlow, {
   Controls,
   useNodesState,
   useEdgesState,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
-import Sidebar from './SideBar';
+  MarkerType,
+  updateEdge,
+} from "reactflow";
+import "reactflow/dist/style.css";
+import CustomEdge from "./CustomEdge";
 
 const initialNodes = [
   {
-    id: '1',
-    type: 'input',
-    data: { label: 'input node' },
-    position: { x: 250, y: 5 },
+    id: "edges-1",
+    type: "input",
+    data: { label: "Input 1" },
+    position: { x: 250, y: 0 },
+  },
+  { id: "edges-2", data: { label: "Node 2" }, position: { x: 150, y: 100 } },
+];
+const initialEdges = [
+  {
+    id: "edges-e1-2",
+    source: "edges-1",
+    target: "edges-2",
+    label: "bezier edge (default)",
+    className: "normal-edge",
   },
 ];
 
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
-
 const FlowLayout: React.FC = () => {
-
   const reactFlowWrapper = useRef(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
-  const onConnect = useCallback((params:any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const onEdgeUpdate = useCallback(
+    (oldEdge: any, newConnection: any) =>
+      setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+    []
+  );
 
-  const onDragOver = useCallback((event:any) => {
+  const onConnect = useCallback(
+    (params: any) =>
+      setEdges((eds: any) =>
+        addEdge(
+          {
+            ...params,
+            type: "floating",
+            markerStart: { type: MarkerType.ArrowClosed },
+            label: "test",
+            deletable: true,
+          },
+          eds
+        )
+      ),
+    []
+  );
+
+  const onDragOver = useCallback((event: any) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = "move";
   }, []);
 
   const onDrop = useCallback(
-    (event:any) => {
+    (event: any) => {
       event.preventDefault();
-      console.log("ondrop")
-      console.log("ondrop",reactFlowInstance)
+      console.log("ondrop");
+      console.log("ondrop", reactFlowInstance);
 
       const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();
-      const type = event.dataTransfer.getData('application/reactflow');
+      const type = event.dataTransfer.getData("application/reactflow");
       console.log("type", JSON.parse(type).name);
       // check if the dropped element is valid
-      if (typeof type === 'undefined' || !type) {
-        console.log("invalid")
+      if (typeof type === "undefined" || !type) {
+        console.log("invalid");
         return;
       }
 
@@ -75,27 +106,23 @@ const FlowLayout: React.FC = () => {
     [reactFlowInstance, setNodes]
   );
   return (
-
-
-<ReactFlow
-    ref={reactFlowWrapper}
-    nodes={nodes}
-    edges={edges}
-    onNodesChange={onNodesChange}
-    onEdgesChange={onEdgesChange}
-    onConnect={onConnect}
-    onInit={setReactFlowInstance}
-    fitView
-    onDrop={onDrop}
-    onDragOver={onDragOver}
+    <ReactFlow
+      ref={reactFlowWrapper}
+      nodes={nodes}
+      edges={edges}
+      onNodesChange={onNodesChange}
+      onEdgesChange={onEdgesChange}
+      onConnect={onConnect}
+      onInit={setReactFlowInstance}
+      fitView
+      onEdgeUpdate={onEdgeUpdate}
+      onDrop={onDrop}
+      onDragOver={onDragOver}
+      snapToGrid={true}
     >
-    <Controls />
-    
-  </ReactFlow>
-
-   
+      <Controls />
+    </ReactFlow>
   );
 };
-
 
 export default FlowLayout;
