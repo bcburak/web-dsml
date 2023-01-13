@@ -1,10 +1,8 @@
-import React,{ useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect } from "react";
 
-import '../src/components/Designer/style.css';
-import Tree from './components/Tree/Tree';
-import { Route, Routes } from 'react-router-dom';
-import Login from './components/Auth/Login';
-import  Home  from './components/Home/Home';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Login from "./components/Auth/Login";
+import Home from "./components/Home/Home";
 
 const structure = [
   {
@@ -45,53 +43,52 @@ const structure = [
   { type: "file", name: "index.js" },
 ];
 
-
 function App() {
-  return(
-
-    <div>
-
-</div>
-   
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/home" element={<Home />} />
+      </Routes>
+    </BrowserRouter>
   );
 
-//   let [data, setData] = useState(structure);
+  //   let [data, setData] = useState(structure);
 
-//   const handleClick = (node: any) => {
-//     console.log(node);
-//   };
-//   const handleUpdate = (state: any) => {
-//     console.log(state);
-//     localStorage.setItem(
-//       "tree",
-//       JSON.stringify(state, function (key, value) {
-//         if (key === "parentNode" || key === "id") {
-//           return null;
-//         }
-//         return value;
-//       })
-//     );
-//   };
+  //   const handleClick = (node: any) => {
+  //     console.log(node);
+  //   };
+  //   const handleUpdate = (state: any) => {
+  //     console.log(state);
+  //     localStorage.setItem(
+  //       "tree",
+  //       JSON.stringify(state, function (key, value) {
+  //         if (key === "parentNode" || key === "id") {
+  //           return null;
+  //         }
+  //         return value;
+  //       })
+  //     );
+  //   };
 
-//   useLayoutEffect(() => {
-//     try {
-//       let savedStructure = JSON.parse(localStorage.getItem("tree") as any);
-//       if (savedStructure) {
-//         setData(savedStructure);
-//       }
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   }, []);
-//   return (
-//     <div style={{width:250}}>
+  //   useLayoutEffect(() => {
+  //     try {
+  //       let savedStructure = JSON.parse(localStorage.getItem("tree") as any);
+  //       if (savedStructure) {
+  //         setData(savedStructure);
+  //       }
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   }, []);
+  //   return (
+  //     <div style={{width:250}}>
 
-// <Tree children={[]} data={data} onUpdate={handleUpdate} onNodeClick={handleClick} />
+  // <Tree children={[]} data={data} onUpdate={handleUpdate} onNodeClick={handleClick} />
 
+  //     </div>
 
-
-//     </div>
-    
   // );
 }
 

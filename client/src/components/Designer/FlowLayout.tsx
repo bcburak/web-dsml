@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 import ReactFlow, {
   addEdge,
@@ -18,6 +18,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import CustomEdge from "./CustomEdge";
+import { useEdgeNames } from "../../store/flow-context";
 
 const initialNodes = [
   {
@@ -41,7 +42,8 @@ const initialEdges = [
 let id = 0;
 const getId = () => `dndnode_${id++}`;
 
-const FlowLayout: React.FC = () => {
+const FlowLayout: React.FC = (props) => {
+  const { edgeName, isDownloadActive, setdownloadClicked } = useEdgeNames();
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -53,6 +55,15 @@ const FlowLayout: React.FC = () => {
     []
   );
 
+  useEffect(() => {
+    // Update the document title using the browser API
+    if (reactFlowInstance && isDownloadActive) {
+      const flow = reactFlowInstance.toObject();
+      localStorage.setItem("flowKey", JSON.stringify(flow));
+      setdownloadClicked(false);
+    }
+  }, [reactFlowInstance, isDownloadActive, setdownloadClicked]);
+
   const onConnect = useCallback(
     (params: any) =>
       setEdges((eds: any) =>
@@ -61,14 +72,21 @@ const FlowLayout: React.FC = () => {
             ...params,
             type: "floating",
             markerStart: { type: MarkerType.ArrowClosed },
-            label: "test",
+            label: edgeName,
             deletable: true,
           },
           eds
         )
       ),
-    []
+    [edgeName, setEdges]
   );
+
+  const onSave = useCallback(() => {
+    if (reactFlowInstance) {
+      const flow = reactFlowInstance.toObject();
+      localStorage.setItem("flowKey", JSON.stringify(flow));
+    }
+  }, [reactFlowInstance]);
 
   const onDragOver = useCallback((event: any) => {
     event.preventDefault();
@@ -78,7 +96,6 @@ const FlowLayout: React.FC = () => {
   const onDrop = useCallback(
     (event: any) => {
       event.preventDefault();
-      console.log("ondrop");
       console.log("ondrop", reactFlowInstance);
 
       const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();

@@ -21,6 +21,7 @@ import { TabList, TabContext, TabPanel } from "@mui/lab";
 
 import CloseIcon from "@mui/icons-material/Close";
 import { Tab } from "@mui/material";
+import FlowProvider from "../../store/FlowProvider";
 
 interface Node {
   type: string;
@@ -194,146 +195,149 @@ function Home() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography
-            sx={{
-              "& 	.MuiTypography-root": {
-                //MuiTypography-root
-                margin: "auto",
-                boxSizing: "border-box",
-              },
-            }}
-            variant="h6"
-            noWrap
-            component="div"
-          >
-            Web Flow DSML
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-      >
-        <DrawerHeader>
-          <Typography
-            sx={{
-              "&.MuiTypography-root": {
-                //MuiTypography-root
-                margin: "auto",
-                boxSizing: "border-box",
-              },
-            }}
-            variant="h6"
-            component="div"
-          >
-            Project Files
-          </Typography>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-
-        <Divider />
-        <Tree
-          children={[]}
-          data={data}
-          onUpdate={handleUpdate}
-          onNodeClick={handleClick}
-        />
-      </Drawer>
-      <Main open={open}>
-        <DrawerHeader />
-
-        <TabContext value={selectedTab}>
-          <TabList aria-label="lab API tabs example">
-            {tabs.map((tab) => (
-              <Tab
-                icon={
-                  <CloseIcon onClick={(e) => handleTabClose(e, tab.value)} />
-                }
-                iconPosition="end"
-                key={tab.value}
-                tabIndex={tab.index}
-                label={tab.value}
-                value={tab.value}
-              />
-            ))}
-          </TabList>
-
-          {tabs.map((panel) => (
-            <TabPanel
-              key={panel.value}
-              value={panel.value}
+    <FlowProvider>
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{ mr: 2, ...(open && { display: "none" }) }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
               sx={{
-                "&.MuiTabPanel-root": {
-                  width: "100%",
-                  height: "100%",
-                  padding: "0px",
+                "& 	.MuiTypography-root": {
+                  //MuiTypography-root
+                  margin: "auto",
+                  boxSizing: "border-box",
                 },
               }}
+              variant="h6"
+              noWrap
+              component="div"
             >
-              {panel.child()}
-            </TabPanel>
-          ))}
-        </TabContext>
-      </Main>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
+              Web Flow DSML
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          sx={{
             width: drawerWidth,
-            // backgroundColor: "red",
-            boxSizing: "border-box",
-          },
-        }}
-        variant="permanent"
-        anchor="right"
-      >
-        <Toolbar style={{ backgroundColor: "text.disabled" }}>
-          <Typography
-            sx={{
-              "&.MuiTypography-root": {
-                margin: "auto",
-                boxSizing: "border-box",
-              },
-            }}
-            variant="h6"
-            component="div"
-          >
-            Designer Tool Box
-          </Typography>
-        </Toolbar>
-        <Divider />
-        <Sidebar />
-      </Drawer>
-    </Box>
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
+          }}
+          variant="persistent"
+          anchor="left"
+          open={open}
+        >
+          <DrawerHeader>
+            <Typography
+              sx={{
+                "&.MuiTypography-root": {
+                  //MuiTypography-root
+                  margin: "auto",
+                  boxSizing: "border-box",
+                },
+              }}
+              variant="h6"
+              component="div"
+            >
+              Project Files
+            </Typography>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "ltr" ? (
+                <ChevronLeftIcon />
+              ) : (
+                <ChevronRightIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+
+          <Divider />
+          <Tree
+            children={[]}
+            data={data}
+            onUpdate={handleUpdate}
+            onNodeClick={handleClick}
+          />
+        </Drawer>
+        <Main open={open}>
+          <DrawerHeader />
+
+          <TabContext value={selectedTab}>
+            <TabList aria-label="lab API tabs example">
+              {tabs.map((tab) => (
+                <Tab
+                  icon={
+                    <CloseIcon onClick={(e) => handleTabClose(e, tab.value)} />
+                  }
+                  iconPosition="end"
+                  key={tab.value}
+                  tabIndex={tab.index}
+                  label={tab.value}
+                  value={tab.value}
+                />
+              ))}
+            </TabList>
+
+            {tabs.map((panel) => (
+              <TabPanel
+                key={panel.value}
+                value={panel.value}
+                sx={{
+                  "&.MuiTabPanel-root": {
+                    width: "100%",
+                    height: "100%",
+                    padding: "0px",
+                  },
+                }}
+              >
+                {panel.child()}
+              </TabPanel>
+            ))}
+          </TabContext>
+        </Main>
+        <Drawer
+          sx={{
+            width: drawerWidth,
+            flexShrink: 0,
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              // backgroundColor: "red",
+              boxSizing: "border-box",
+            },
+          }}
+          variant="permanent"
+          anchor="right"
+        >
+          <Toolbar style={{ backgroundColor: "text.disabled" }}>
+            <Typography
+              sx={{
+                "&.MuiTypography-root": {
+                  margin: "auto",
+                  boxSizing: "border-box",
+                },
+              }}
+              variant="h6"
+              component="div"
+            >
+              Designer Tool Box
+            </Typography>
+          </Toolbar>
+          <Divider />
+
+          <Sidebar />
+        </Drawer>
+      </Box>
+    </FlowProvider>
   );
 }
 

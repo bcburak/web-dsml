@@ -12,6 +12,7 @@ import NextPlanIcon from "@mui/icons-material/NextPlan";
 import CycloneIcon from "@mui/icons-material/Cyclone";
 import GroupsIcon from "@mui/icons-material/Groups";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
+import { EdgeName, useEdgeNames } from "../../store/flow-context";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -21,13 +22,20 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const Sidebar = () => {
+const Sidebar = (props: any) => {
+  // const [downloadClicked, setdownloadClicked] = useState(false);
+
+  const { setEdgeName, setdownloadClicked } = useEdgeNames();
+
   const onDragStart = (event: any, nodeType: any, nodeName: string) => {
     var obj = { type: nodeType, name: nodeName };
     event.dataTransfer.setData("application/reactflow", JSON.stringify(obj));
     event.dataTransfer.effectAllowed = "move";
   };
-  const onEdgeClick = (event: any, edgeLabel: string) => {};
+
+  const onDownloadClicked = () => {
+    // setdownloadClicked(true);
+  };
 
   return (
     <Box sx={{ width: "100%", maxWidth: 360 }}>
@@ -141,19 +149,19 @@ const Sidebar = () => {
       <br />
 
       <Stack direction="row" spacing={2}>
-        <Item onClick={(event: any) => onEdgeClick(event, "implements")}>
+        <Item onClick={(event: any) => setEdgeName(EdgeName.Implements)}>
           {" "}
           <Tooltip title="Implements">
             <DragHandleIcon />
           </Tooltip>
         </Item>
-        <Item onClick={(event: any) => onEdgeClick(event, "interactsWith")}>
+        <Item onClick={() => setEdgeName(EdgeName.InteractsWith)}>
           {" "}
           <Tooltip title="interactsWith">
             <DragHandleIcon />
           </Tooltip>
         </Item>
-        <Item onClick={(event: any) => onEdgeClick(event, "subCapability")}>
+        <Item onClick={(event: any) => setEdgeName(EdgeName.SubCapability)}>
           {" "}
           <Tooltip title="subCapability">
             <DragHandleIcon />
@@ -164,7 +172,7 @@ const Sidebar = () => {
       <br />
       <Stack direction="row" spacing={200}>
         <Button
-          onClick={(event: any) => onEdgeClick(event, "implements")}
+          onClick={() => setdownloadClicked(true)}
           variant="contained"
           endIcon={<CloudDownloadIcon />}
         >
