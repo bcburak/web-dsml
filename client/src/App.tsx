@@ -1,6 +1,7 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
+import { useCookies } from "react-cookie";
 
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import Login from "./components/Auth/Login";
 import Home from "./components/Home/Home";
 
@@ -44,6 +45,12 @@ const structure = [
 ];
 
 function App() {
+  // const [cookies] = useCookies(["logged_in"]);
+  // const navigate = useNavigate();
+  // useEffect(() => {
+  //   // Update the document title using the browser API
+  //   cookies.logged_in && navigate("/home");
+  // });
   return (
     <BrowserRouter>
       <Routes>
