@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import AccessibilityNewIcon from "@mui/icons-material/AccessibilityNew";
 import PlayCircleFilledWhiteIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import Stack from "@mui/material/Stack";
@@ -25,17 +25,35 @@ const Item = styled(Paper)(({ theme }) => ({
 const Sidebar = (props: any) => {
   // const [downloadClicked, setdownloadClicked] = useState(false);
 
-  const { setEdgeName, setdownloadClicked } = useEdgeNames();
+  const { setEdgeName, setdownloadClicked, reactFlowInstance } = useEdgeNames();
 
   const onDragStart = (event: any, nodeType: any, nodeName: string) => {
     var obj = { type: nodeType, name: nodeName };
     event.dataTransfer.setData("application/reactflow", JSON.stringify(obj));
     event.dataTransfer.effectAllowed = "move";
   };
+  function onDownloadClick(): void {
+    const flow = reactFlowInstance.toObject();
+    const fileData = JSON.stringify(flow);
+    console.log("instance", flow);
+    localStorage.setItem("reactFlowInstance", fileData);
 
-  const onDownloadClicked = () => {
-    // setdownloadClicked(true);
-  };
+    const blob = new Blob([fileData], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = "flowFile.json";
+    link.href = url;
+    link.click();
+  }
+
+  // if (reactFlowInstance && isDownloadActive) {
+  //   console.log("active");
+  //   const flow = reactFlowInstance.toObject();
+  //   localStorage.setItem(reactFlowInstance, JSON.stringify(flow));
+  // }
+  // const createFlowFile = () => {
+
+  // };
 
   return (
     <Box sx={{ width: "100%", maxWidth: 360 }}>
@@ -172,7 +190,7 @@ const Sidebar = (props: any) => {
       <br />
       <Stack direction="row" spacing={200}>
         <Button
-          onClick={() => setdownloadClicked(true)}
+          onClick={() => onDownloadClick()}
           variant="contained"
           endIcon={<CloudDownloadIcon />}
         >

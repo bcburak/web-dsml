@@ -15,6 +15,7 @@ import ReactFlow, {
   useEdgesState,
   MarkerType,
   updateEdge,
+  Viewport,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import CustomEdge from "./CustomEdge";
@@ -47,7 +48,7 @@ const FlowLayout: React.FC = (props) => {
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const { reactFlowInstance, setReactFlowInstance } = useEdgeNames();
 
   const onEdgeUpdate = useCallback(
     (oldEdge: any, newConnection: any) =>
@@ -57,12 +58,14 @@ const FlowLayout: React.FC = (props) => {
 
   useEffect(() => {
     // Update the document title using the browser API
-    if (reactFlowInstance && isDownloadActive) {
+    console.log("reactFlowInstance", reactFlowInstance);
+    if (reactFlowInstance) {
+      console.log("reactFlow");
       const flow = reactFlowInstance.toObject();
       localStorage.setItem("flowKey", JSON.stringify(flow));
-      setdownloadClicked(false);
+      // setdownloadClicked(false);
     }
-  }, [reactFlowInstance, isDownloadActive, setdownloadClicked]);
+  }, [isDownloadActive, reactFlowInstance]);
 
   const onConnect = useCallback(
     (params: any) =>
@@ -80,13 +83,6 @@ const FlowLayout: React.FC = (props) => {
       ),
     [edgeName, setEdges]
   );
-
-  const onSave = useCallback(() => {
-    if (reactFlowInstance) {
-      const flow = reactFlowInstance.toObject();
-      localStorage.setItem("flowKey", JSON.stringify(flow));
-    }
-  }, [reactFlowInstance]);
 
   const onDragOver = useCallback((event: any) => {
     event.preventDefault();

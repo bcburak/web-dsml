@@ -11,6 +11,8 @@ type FlowContextType = {
   setEdgeName: (EdgeName: EdgeName) => void;
   isDownloadActive: boolean;
   setdownloadClicked: (isDownloadActive: boolean) => void;
+  reactFlowInstance: any;
+  setReactFlowInstance: (reactFlowInstance: any) => void;
 };
 
 const FlowContext = React.createContext<FlowContextType | null>({
@@ -19,6 +21,8 @@ const FlowContext = React.createContext<FlowContextType | null>({
   isDownloadActive: false,
   setdownloadClicked: (isDownloadActive: boolean) =>
     console.warn("no theme provider"),
+  reactFlowInstance: null,
+  setReactFlowInstance: () => console.log("setReactFlowInstance"),
 });
 export { FlowContext };
 export const useEdgeNames = () => useContext(FlowContext);
