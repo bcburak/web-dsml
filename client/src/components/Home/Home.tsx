@@ -122,7 +122,7 @@ function Home() {
     }
   };
   const handleUpdate = (state: any) => {
-    console.log(state);
+    console.log("update", state);
     localStorage.setItem(
       "tree",
       JSON.stringify(state, function (key, value) {

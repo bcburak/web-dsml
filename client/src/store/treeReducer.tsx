@@ -38,6 +38,8 @@ const treeReducer = (state: any, action: TreeAction) => {
       return action.payload;
 
     case TreeActionTypes.FILECREATE:
+      console.log("files", node.files);
+      console.log("fileNAme", action.payload.name);
       node.files.push(createFile({ name: action.payload.name }));
       return newState;
 
