@@ -2,7 +2,8 @@ import React, { useRef, useState } from "react";
 import { AiOutlineFile, AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 
 import { StyledFile } from "./TreeFile.style";
-import { useTreeContext } from "../state/TreeContext";
+// import { useTreeContext } from "../state/TreeContext";
+import { useTreeContext } from "../../../store/tree-context";
 import { ActionsWrapper, StyledName } from "../../Tree/Tree.style.js";
 import { PlaceholderInput } from "../../Tree/TreePlaceholderInput";
 

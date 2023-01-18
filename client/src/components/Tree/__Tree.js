@@ -3,11 +3,12 @@ import { v4 } from "uuid";
 import { ThemeProvider } from "styled-components";
 
 import { useDidMountEffect } from "../../utils/utils.js"
-import { TreeContext, reducer } from "./state";
+import { reducer, TreeContext } from "./state/index.js";
+// import { TreeContext } from "../../store/tree-context";
 
-import { StyledTree } from "../Tree/Tree.style.js";
-import { Folder } from "../Tree/Folder/TreeFolder.js";
-import { File } from "../Tree/File/TreeFile";
+import { StyledTree } from "./Tree.style.js";
+import { Folder } from "./Folder/TreeFolder.js";
+import { File } from "./File/TreeFile.js";
 
 const Tree = ({ children, data, onNodeClick, onUpdate }) => {
   const [state, dispatch] = useReducer(reducer, data);
@@ -23,17 +24,19 @@ const Tree = ({ children, data, onNodeClick, onUpdate }) => {
   // eslint-disable-next-line no-undef
   const isImparative = true;//data && !children;
 
+  const treeContext = {
+    isImparative,
+    state,
+    dispatch,
+    onNodeClick: (node) => {
+      onNodeClick && onNodeClick(node);
+    },
+  };
+
   return (
     <ThemeProvider theme={{ indent: 20 }}>
       <TreeContext.Provider
-        value={{
-          isImparative,
-          state,
-          dispatch,
-          onNodeClick: (node) => {
-            onNodeClick && onNodeClick(node);
-          },
-        }}
+        value={treeContext}
       >
         <StyledTree>
           {isImparative ? (

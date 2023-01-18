@@ -16,6 +16,8 @@ import ReactFlow, {
   MarkerType,
   updateEdge,
   Viewport,
+  Background,
+  BackgroundVariant,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import CustomEdge from "./CustomEdge";
@@ -134,6 +136,7 @@ const FlowLayout: React.FC = (props) => {
       snapToGrid={true}
     >
       <Controls />
+      <Background color="#99b3ec" />
     </ReactFlow>
   );
 };

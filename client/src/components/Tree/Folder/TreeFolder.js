@@ -17,7 +17,8 @@ import {
 import { StyledFolder } from "./TreeFolder.style";
 
 import { FILE, FOLDER } from "../../Tree/state/constants";
-import { useTreeContext } from "../../Tree/state/TreeContext";
+// import { useTreeContext } from "../state/TreeContext";
+import { useTreeContext } from "../../../store/tree-context";
 import { PlaceholderInput } from "../../Tree/TreePlaceholderInput";
 
 const FolderName = ({ isOpen, name, handleClick }) => (

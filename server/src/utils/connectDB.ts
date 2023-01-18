@@ -3,7 +3,7 @@ import config from 'config';
 
 const dbUrl = `mongodb://${config.get('dbName')}:${config.get(
   'dbPass'
-)}@localhost:6000/jwtAuth?authSource=admin`;
+)}@web-flow-dsml-cluster.cmisbke.mongodb.net/?retryWrites=true&w=majority`;
 
 const connectDB = async () => {
   try {

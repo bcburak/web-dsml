@@ -83,31 +83,16 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 const structure = [
   {
     type: "folder",
-    name: "client",
+    name: "projects",
     files: [
       {
         type: "folder",
-        name: "components",
-        files: [
-          { type: "file", name: "Tree.js" },
-          { type: "file", name: "Tree.style.js" },
-        ],
+        name: "project#1",
+        files: [{ type: "file", name: "dsml.flow" }],
       },
       { type: "file", name: "setup.js" },
-      { type: "file", name: "setupTests.js" },
     ],
   },
-  {
-    type: "folder",
-    name: "packages",
-    files: [
-      {
-        type: "file",
-        name: "main.js",
-      },
-    ],
-  },
-  { type: "file", name: "index.flw" },
 ];
 
 function Home() {
@@ -116,7 +101,7 @@ function Home() {
   const [selectedTab, setSelectedTab] = useState("Main");
 
   const [tabs, setTabs] = useState([]);
-  const [panels, setPanels] = useState([]);
+  // const [panels, setPanels] = useState([]);
   const [tabIndex, setTabIndex] = useState(2);
 
   const handleDrawerOpen = () => {
@@ -130,6 +115,7 @@ function Home() {
   let [data, setData] = useState(structure);
 
   const handleClick = (node: any) => {
+    console.log("handle click");
     console.log(node.node.type);
     if (node.node.type === "file") {
       createNewTab(node.node.name);
