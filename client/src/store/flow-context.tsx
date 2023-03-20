@@ -6,6 +6,8 @@ export enum EdgeName {
   SubCapability = "SubCapability",
 }
 
+// const [nodeName, setNodeName] = useState("Node 1");
+
 type FlowContextType = {
   edgeName: EdgeName;
   setEdgeName: (EdgeName: EdgeName) => void;
@@ -13,6 +15,9 @@ type FlowContextType = {
   setdownloadClicked: (isDownloadActive: boolean) => void;
   reactFlowInstance: any;
   setReactFlowInstance: (reactFlowInstance: any) => void;
+  nodeName: any;
+  setNodeName: (reactFlowInstance: any) => void;
+  // setNodeName :(nodeName:any) => void;
 };
 
 const FlowContext = React.createContext<FlowContextType | null>({
@@ -23,6 +28,9 @@ const FlowContext = React.createContext<FlowContextType | null>({
     console.warn("no theme provider"),
   reactFlowInstance: null,
   setReactFlowInstance: () => console.log("setReactFlowInstance"),
+  nodeName: null,
+  setNodeName: () => console.log("setReactFlowInstance"),
+  // setNodeName(nodeName):() => console.log("node namesetted"),
 });
 export { FlowContext };
 export const useEdgeNames = () => useContext(FlowContext);

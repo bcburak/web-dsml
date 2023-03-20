@@ -1,10 +1,18 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import AccessibilityNewIcon from "@mui/icons-material/AccessibilityNew";
 import PlayCircleFilledWhiteIcon from "@mui/icons-material/PlayCircleFilledWhite";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
-import { Box, Button, Divider, Grid, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import FireplaceIcon from "@mui/icons-material/Fireplace";
 import EventIcon from "@mui/icons-material/Event";
@@ -13,6 +21,7 @@ import CycloneIcon from "@mui/icons-material/Cyclone";
 import GroupsIcon from "@mui/icons-material/Groups";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { EdgeName, useEdgeNames } from "../../store/flow-context";
+import httpCommon from "../../utils/http-common";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,6 +35,7 @@ const Sidebar = (props: any) => {
   // const [downloadClicked, setdownloadClicked] = useState(false);
 
   const { setEdgeName, setdownloadClicked, reactFlowInstance } = useEdgeNames();
+  const { nodeName, setNodeName } = useEdgeNames();
 
   const onDragStart = (event: any, nodeType: any, nodeName: string) => {
     var obj = { type: nodeType, name: nodeName };
@@ -37,7 +47,7 @@ const Sidebar = (props: any) => {
     const fileData = JSON.stringify(flow);
     console.log("instance", flow);
     localStorage.setItem("reactFlowInstance", fileData);
-
+    httpCommon.post("/userData", fileData);
     const blob = new Blob([fileData], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -194,9 +204,31 @@ const Sidebar = (props: any) => {
           variant="contained"
           endIcon={<CloudDownloadIcon />}
         >
-          Download
+          Save & Download
         </Button>
       </Stack>
+      <br />
+      <Divider variant="middle" />
+      <Box sx={{ my: 1, mx: 1 }}>
+        <Grid container alignItems="center">
+          <Grid item xs>
+            <Typography gutterBottom variant="h5" component="div">
+              Update Nodes
+            </Typography>
+          </Grid>
+        </Grid>
+        <Typography color="text.secondary" variant="body2">
+          Click any node to update name from the label field
+        </Typography>
+      </Box>
+      <Divider variant="middle" />
+      <TextField
+        id="outlined-basic"
+        label="Node Name"
+        variant="outlined"
+        value={nodeName}
+        onChange={(evt) => setNodeName(evt.target.value)}
+      />
     </Box>
   );
 };

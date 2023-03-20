@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect } from "react";
 import "./style.css";
 import "reactflow/dist/style.css";
 import { styled, useTheme } from "@mui/material/styles";
@@ -20,7 +20,7 @@ import FlowLayout from "../Designer/FlowLayout";
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 
 import CloseIcon from "@mui/icons-material/Close";
-import { Tab } from "@mui/material";
+import { Button, Tab, Tabs } from "@mui/material";
 import FlowProvider from "../../store/FlowProvider";
 
 interface Node {
@@ -95,14 +95,60 @@ const structure = [
   },
 ];
 
+interface TabData {
+  title: string;
+  content: React.ReactNode;
+}
+
 function Home() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  // const [tabs, setTabs] = useState<TabData[]>([
+  //   { title: "Tab 1", content: <FlowLayout /> },
+  // ]);
+  // const [value, setValue] = useState(0);
+
+  // const [selectedTab, setSelectedTab] = useState("Main");
+
+  // const [tabs, setTabs] = useState([]);
+  // const [panels, setPanels] = useState([]);
+  // const [tabIndex, setTabIndex] = useState<number>(0);
+  // const [activeNode, setActiveNode] = useState<any>([]);
+
   const [selectedTab, setSelectedTab] = useState("Main");
 
   const [tabs, setTabs] = useState([]);
-  // const [panels, setPanels] = useState([]);
   const [tabIndex, setTabIndex] = useState(2);
+
+  const handleChange = (event: any, newValue: any) => {
+    setSelectedTab(newValue);
+  };
+
+  const handleTabOptions = (value: any) => {
+    setSelectedTab(value);
+    setTabIndex(tabIndex + 1);
+  };
+
+  const addTab = () => {
+    const value = `Blue Box ${tabIndex}`;
+    const newTab = {
+      value: value,
+      child: () => <FlowLayout fileName={value} />,
+      index: tabIndex,
+    };
+
+    setTabs([...tabs, newTab]);
+
+    handleTabOptions(value);
+  };
+
+  const handleTabClose = (event: any, value: any) => {
+    tabs.map((e) => console.log("e.value", e.value));
+    const tabArr = tabs.filter((x) => x.value !== value);
+    console.log("tabArr", tabArr);
+    setTabs(tabArr);
+    setSelectedTab(tabArr[0].value);
+  };
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -114,13 +160,6 @@ function Home() {
 
   let [data, setData] = useState(structure);
 
-  const handleClick = (node: any) => {
-    console.log("handle click");
-    console.log(node.node.type);
-    if (node.node.type === "file") {
-      createNewTab(node.node.name);
-    }
-  };
   const handleUpdate = (state: any) => {
     console.log("update", state);
     localStorage.setItem(
@@ -134,31 +173,6 @@ function Home() {
     );
   };
 
-  const handleTabOptions = (value: any) => {
-    setSelectedTab(value);
-    setTabIndex(tabIndex + 1);
-  };
-  const createNewTab = (fileName: any) => {
-    const value = fileName;
-    const newTab = {
-      value: value,
-      child: () => <FlowLayout />,
-      index: tabIndex,
-    };
-
-    setTabs([...tabs, newTab]);
-    console.log("newtab", newTab);
-    // setPanels([
-    //     ...panels,
-    //     {
-    //         value: value,
-    //         child: () => <div style={{height: '300px', width: '300px', backgroundColor: 'blue'}} />
-    //     }
-    // ])
-
-    handleTabOptions(value);
-  };
-
   useLayoutEffect(() => {
     try {
       let savedStructure = JSON.parse(localStorage.getItem("tree") as any);
@@ -170,15 +184,24 @@ function Home() {
     }
   }, []);
 
-  const handleTabClose = (event: any, value: any) => {
-    console.log(value);
-    const tabArr = tabs.filter((x) => x.value !== value);
-    console.log(tabArr);
-    setTabs(tabArr);
+  // useEffect(() => {
+  //   console.log("active tab ", tabIndex);
+  //   console.log("activeNode tab ", activeNode);
+  //   console.log("activeNode type ", activeNode.node);
 
-    // const panelArr = panels.filter(p => p.value !== value)
-    // setPanels(panelArr);
-  };
+  //   // if (activeNode.node.type === "file") {
+  //   //   setTabIndex((tabIndex) => tabIndex + 1);
+  //   //   console.log("node handle", tabIndex);
+  //   //   //createNewTab(node.node.name);
+  //   //   // setActiveTabIndex((activeTabIndex) => activeTabIndex + 1);
+  //   // }
+  //   // setTabIndex(tabIndex + 1);
+  //   console.log("tabIndex", tabIndex);
+  // }, [activeNode, tabIndex]);
+
+  // const increase = () => {
+  //   setTabIndex((tabIndex) => tabIndex + 1);
+  // };
 
   return (
     <FlowProvider>
@@ -248,18 +271,21 @@ function Home() {
           </DrawerHeader>
 
           <Divider />
-          <Tree
+          <Button onClick={addTab}></Button>
+
+          {/* <Tree
             children={[]}
             data={data}
             onUpdate={handleUpdate}
-            onNodeClick={handleClick}
+            activeTabIndex={tabIndex}
+            onNodeClick={handleNodeClick}
           />
+          {tabIndex} */}
         </Drawer>
         <Main open={open}>
           <DrawerHeader />
-
           <TabContext value={selectedTab}>
-            <TabList aria-label="lab API tabs example">
+            <TabList onChange={handleChange} aria-label="lab API tabs example">
               {tabs.map((tab) => (
                 <Tab
                   icon={
@@ -267,7 +293,6 @@ function Home() {
                   }
                   iconPosition="end"
                   key={tab.value}
-                  tabIndex={tab.index}
                   label={tab.value}
                   value={tab.value}
                 />
@@ -290,6 +315,43 @@ function Home() {
               </TabPanel>
             ))}
           </TabContext>
+
+          {/* <TabContext value={selectedTab}>
+            <TabList aria-label="lab API tabs example">
+              {tabs.map((tab) => (
+                <Tab
+                  icon={
+                    <CloseIcon onClick={(e) => handleTabClose(e, tab.value)} />
+                  }
+                  iconPosition="end"
+                  key={tab.value}
+                  tabIndex={tab.index}
+                  label={tab.value}
+                  value={tab.value}
+                  onClick={() => {
+                    setSelectedTab(tab.value);
+                    console.log("on tab click", tab.value);
+                  }}
+                />
+              ))}
+            </TabList>
+
+            {tabs.map((panel) => (
+              <TabPanel
+                key={panel.value}
+                value={panel.value}
+                sx={{
+                  "&.MuiTabPanel-root": {
+                    width: "100%",
+                    height: "100%",
+                    padding: "0px",
+                  },
+                }}
+              >
+                {panel.child()}
+              </TabPanel>
+            ))}
+          </TabContext> */}
         </Main>
         <Drawer
           sx={{

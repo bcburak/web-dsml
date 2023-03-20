@@ -1,5 +1,7 @@
 export const getGoogleUrl = (from: string) => {
+  console.log("getGoogleUrl",from);
     const rootUrl = `https://accounts.google.com/o/oauth2/v2/auth`;
+    console.log("redirect uri",process.env.REACT_APP_GOOGLE_OAUTH_REDIRECT)
   
     const options = {
       redirect_uri: process.env.REACT_APP_GOOGLE_OAUTH_REDIRECT as string,

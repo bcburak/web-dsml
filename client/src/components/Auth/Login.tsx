@@ -17,7 +17,6 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import GoogleLogin from "react-google-login";
 import { getGoogleUrl } from "../../utils/getGoogleUrl";
 import { useLocation } from "react-router-dom";
 import { ReactComponent as GoogleLogo } from "../../assets/google.svg";

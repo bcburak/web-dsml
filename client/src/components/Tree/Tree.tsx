@@ -1,4 +1,4 @@
-import React, { useReducer, useLayoutEffect } from "react";
+import React, { useReducer, useLayoutEffect, useState } from "react";
 import { v4 } from "uuid";
 import { ThemeProvider } from "styled-components";
 
@@ -13,11 +13,13 @@ import { File } from "./File/TreeFile.js";
 const Tree = ({
   children,
   data,
+  activeTabIndex,
   onNodeClick,
   onUpdate,
 }: {
   children: any;
   data: any;
+  activeTabIndex: any;
   onNodeClick: any;
   onUpdate: any;
 }) => {
@@ -33,14 +35,16 @@ const Tree = ({
 
   // eslint-disable-next-line no-undef
   const isImparative = true; //data && !children;
+  // const activeTabIndex = 0;
 
   const treeContext = {
     isImparative,
+    // activeTabIndex,
     state,
     dispatch,
     onNodeClick: (node: any) => {
-      console.log("node clicked");
       onNodeClick && onNodeClick(node);
+      // console.log("node clicked", tabIndex);
     },
   };
 

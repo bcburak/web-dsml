@@ -5,6 +5,7 @@ const FlowProvider = (props: any) => {
   const [edgeName, setEdgeName] = React.useState(EdgeName.Implements);
   const [isDownloadActive, setdownloadClicked] = React.useState(false);
   const [reactFlowInstance, setReactFlowInstance] = React.useState(null);
+  const [nodeName, setNodeName] = React.useState(null);
 
   const flwContext = {
     edgeName: edgeName,
@@ -13,6 +14,8 @@ const FlowProvider = (props: any) => {
     setdownloadClicked: setdownloadClicked,
     reactFlowInstance: reactFlowInstance,
     setReactFlowInstance: setReactFlowInstance,
+    nodeName: nodeName,
+    setNodeName: setNodeName,
   };
 
   return (
