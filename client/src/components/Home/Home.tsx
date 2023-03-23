@@ -13,21 +13,103 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import Tree from "../Tree/Tree";
+// import Tree from "../Tree/Tree";
 import Sidebar from "../Designer/SideBar";
 import FlowLayout from "../Designer/FlowLayout";
+
+import "normalize.css";
+import "@blueprintjs/core/lib/css/blueprint.css";
+import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Tab, Tabs } from "@mui/material";
+import { Button, Tab } from "@mui/material";
 import FlowProvider from "../../store/FlowProvider";
+import { renderers as bpRenderers } from "react-complex-tree-blueprintjs-renderers";
+import {
+  StaticTreeDataProvider,
+  Tree,
+  TreeItem,
+  TreeItemIndex,
+  UncontrolledTreeEnvironment,
+} from "react-complex-tree";
+import { longTree } from "../Tree/data";
+import { useEdgeNames } from "../../store/flow-context";
 
 interface Node {
   type: string;
   name: string;
   id: string;
 }
+
+const initialNodes = [
+  {
+    root: {
+      index: "root",
+      canMove: true,
+      isFolder: true,
+      children: ["Projects"],
+      data: "root",
+      canRename: true,
+    },
+    Projects: {
+      index: "Projects",
+      canMove: true,
+      isFolder: true,
+      children: ["GarbageCollector"],
+      data: "Projects",
+      canRename: true,
+    },
+    GarbageCollector: {
+      index: "GarbageCollector",
+      canMove: true,
+      isFolder: true,
+      children: ["Mas", "Blueberry"],
+      data: "GarbageCollector",
+      canRename: true,
+    },
+    Mas: {
+      index: "Mas",
+      canMove: true,
+      isFolder: false,
+      data: "Mas",
+      canRename: true,
+    },
+    Blueberry: {
+      index: "Blueberry",
+      canMove: true,
+      isFolder: false,
+      data: "Blueberry",
+      canRename: true,
+    },
+  },
+];
+
+const treeItems = {
+  root: {
+    index: "root",
+    isFolder: true,
+    children: ["child1", "child2"],
+    data: "Root item",
+  },
+  child1: {
+    index: "child1",
+    children: [] as any,
+    data: "Child item 1",
+  },
+  child2: {
+    index: "child2",
+    isFolder: true,
+    children: ["child3"] as any,
+    data: "Child item 2",
+  },
+  child3: {
+    index: "child3",
+    children: [] as any,
+    data: "Child item 3",
+  },
+};
 
 const drawerWidth = 240;
 
@@ -103,22 +185,13 @@ interface TabData {
 function Home() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  // const [tabs, setTabs] = useState<TabData[]>([
-  //   { title: "Tab 1", content: <FlowLayout /> },
-  // ]);
-  // const [value, setValue] = useState(0);
-
-  // const [selectedTab, setSelectedTab] = useState("Main");
-
-  // const [tabs, setTabs] = useState([]);
-  // const [panels, setPanels] = useState([]);
-  // const [tabIndex, setTabIndex] = useState<number>(0);
-  // const [activeNode, setActiveNode] = useState<any>([]);
+  // const { tabIndex, setTabIndex } = useEdgeNames();
+  const [counter, setCounter] = useState(0);
+  const [focusedItem, setFocusedItem] = useState<TreeItem<string>>();
 
   const [selectedTab, setSelectedTab] = useState("Main");
 
   const [tabs, setTabs] = useState([]);
-  const [tabIndex, setTabIndex] = useState(2);
 
   const handleChange = (event: any, newValue: any) => {
     setSelectedTab(newValue);
@@ -126,28 +199,36 @@ function Home() {
 
   const handleTabOptions = (value: any) => {
     setSelectedTab(value);
-    setTabIndex(tabIndex + 1);
+    // setTabIndex(tabIndex + 1);
+    // setTabIndex(5);
+    // console.log("tabindex:", tabIndex);
+    console.log("setSelectedTab:", selectedTab);
   };
 
-  const addTab = () => {
-    const value = `Blue Box ${tabIndex}`;
+  const addTab = (treeFileName: any, itemIndex: any) => {
+    // const value = `Blue Box ${itemIndex}`;
+    console.log("treeFileName:", treeFileName);
+    console.log("itemIndex:", itemIndex);
     const newTab = {
-      value: value,
-      child: () => <FlowLayout fileName={value} />,
-      index: tabIndex,
+      value: treeFileName,
+      child: () => <FlowLayout fileName={treeFileName} />,
+      index: itemIndex,
     };
+    // setTabs([...tabs, newTab]);
+    setTabs((prevTabs) => [...prevTabs, newTab]);
 
-    setTabs([...tabs, newTab]);
-
-    handleTabOptions(value);
+    handleTabOptions(treeFileName);
   };
 
   const handleTabClose = (event: any, value: any) => {
     tabs.map((e) => console.log("e.value", e.value));
-    const tabArr = tabs.filter((x) => x.value !== value);
-    console.log("tabArr", tabArr);
-    setTabs(tabArr);
-    setSelectedTab(tabArr[0].value);
+    // const tabArr = tabs.filter((x) => x.value !== value);
+    // console.log("tabArr", tabArr);
+    setTabs((tabs) => {
+      return tabs.filter((x) => x.value !== value);
+    });
+    console.log("tabArrtabs", tabs);
+    setSelectedTab(tabs[0].value);
   };
 
   const handleDrawerOpen = () => {
@@ -184,24 +265,25 @@ function Home() {
     }
   }, []);
 
-  // useEffect(() => {
-  //   console.log("active tab ", tabIndex);
-  //   console.log("activeNode tab ", activeNode);
-  //   console.log("activeNode type ", activeNode.node);
+  useEffect(() => {
+    console.log("counter", counter);
+    console.log("tabs", tabs);
+  }, [counter, tabs, selectedTab]);
 
-  //   // if (activeNode.node.type === "file") {
-  //   //   setTabIndex((tabIndex) => tabIndex + 1);
-  //   //   console.log("node handle", tabIndex);
-  //   //   //createNewTab(node.node.name);
-  //   //   // setActiveTabIndex((activeTabIndex) => activeTabIndex + 1);
-  //   // }
-  //   // setTabIndex(tabIndex + 1);
-  //   console.log("tabIndex", tabIndex);
-  // }, [activeNode, tabIndex]);
-
-  // const increase = () => {
-  //   setTabIndex((tabIndex) => tabIndex + 1);
-  // };
+  const onTreeItemDoubleClick = async (event: any, item: any) => {
+    // event.preventDefault();
+    console.log("ontree:");
+    if (event) {
+      event.preventDefault();
+      setCounter((counter) => counter + 1);
+      // console.log("focused", counter);
+    }
+    if (item.isFolder === false) {
+      // setTabIndex(tabIndex + 1);
+      // console.log("tabindex:", tabIndex);
+      addTab(item.data, counter);
+    }
+  };
 
   return (
     <FlowProvider>
@@ -271,13 +353,59 @@ function Home() {
           </DrawerHeader>
 
           <Divider />
-          <Button onClick={addTab}></Button>
+          <Button onClick={() => addTab("val", 1)}></Button>
+
+          <UncontrolledTreeEnvironment<string>
+            canDragAndDrop
+            canDropOnFolder
+            canReorderItems
+            dataProvider={
+              new StaticTreeDataProvider(longTree.items, (item, data) => ({
+                ...item,
+                data,
+              }))
+            }
+            getItemTitle={(item) => item.data}
+            onFocusItem={(item) => setFocusedItem(item)}
+            canRename={true}
+            defaultInteractionMode={{
+              mode: "custom",
+              createInteractiveElementProps: (
+                item,
+                treeId,
+                actions,
+                renderFlags
+              ) => ({
+                onClick: (e) => {
+                  e.preventDefault();
+                  onTreeItemDoubleClick(e, item);
+                },
+                onFocus: () => {
+                  // console.log("focuus", actions.focusItem());
+                },
+
+                tabIndex: !renderFlags.isRenaming
+                  ? renderFlags.isFocused
+                    ? 0
+                    : -1
+                  : undefined,
+              }),
+            }}
+            viewState={{
+              "tree-1": {
+                expandedItems: [],
+              },
+            }}
+            {...bpRenderers}
+          >
+            <Tree treeId="tree-1" rootItem="root" treeLabel="Projects tree" />
+          </UncontrolledTreeEnvironment>
 
           {/* <Tree
             children={[]}
             data={data}
             onUpdate={handleUpdate}
-            activeTabIndex={tabIndex}
+            activeTabIndex={counter}
             onNodeClick={handleNodeClick}
           />
           {tabIndex} */}
