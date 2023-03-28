@@ -13,13 +13,11 @@ import { File } from "./File/TreeFile.js";
 const Tree = ({
   children,
   data,
-  activeTabIndex,
   onNodeClick,
   onUpdate,
 }: {
   children: any;
   data: any;
-  activeTabIndex: any;
   onNodeClick: any;
   onUpdate: any;
 }) => {
@@ -31,6 +29,7 @@ const Tree = ({
 
   useDidMountEffect(() => {
     onUpdate && onUpdate(state);
+    // dispatch({ type: TreeActionTypes.FOLDERCREATE, payload: "data" });
   }, [state]);
 
   // eslint-disable-next-line no-undef

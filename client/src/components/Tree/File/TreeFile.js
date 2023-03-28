@@ -60,7 +60,7 @@ const File = ({ name, id, node }) => {
           </StyledName>
           {isImparative && (
             <div className="actions">
-              <AiOutlineEdit onClick={toggleEditing} />
+              {/* <AiOutlineEdit onClick={toggleEditing} /> */}
               <AiOutlineDelete onClick={commitDelete} />
             </div>
           )}

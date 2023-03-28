@@ -5,45 +5,6 @@ import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import Login from "./components/Auth/Login";
 import Home from "./components/Home/Home";
 
-const structure = [
-  {
-    type: "folder",
-    name: "client",
-    files: [
-      {
-        type: "folder",
-        name: "ui",
-        files: [
-          { type: "file", name: "Toggle.js" },
-          { type: "file", name: "Button.js" },
-          { type: "file", name: "Button.style.js" },
-        ],
-      },
-      {
-        type: "folder",
-        name: "components",
-        files: [
-          { type: "file", name: "Tree.js" },
-          { type: "file", name: "Tree.style.js" },
-        ],
-      },
-      { type: "file", name: "setup.js" },
-      { type: "file", name: "setupTests.js" },
-    ],
-  },
-  {
-    type: "folder",
-    name: "packages",
-    files: [
-      {
-        type: "file",
-        name: "main.js",
-      },
-    ],
-  },
-  { type: "file", name: "index.js" },
-];
-
 function App() {
   // const [cookies] = useCookies(["logged_in"]);
   // const navigate = useNavigate();

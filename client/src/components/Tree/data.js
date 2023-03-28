@@ -1,4 +1,4 @@
-const readTemplate = (template, data = { items: {} }) => {
+export const readTemplate = (template, data = { items: {} }) => {
   let counter = 2;
   for (const [key, value] of Object.entries(template)) {
     data.items[key] = {
@@ -36,7 +36,21 @@ const shortTreeTemplate = {
   },
 };
 
-const longTreeTemplate = {
+interface GarbageCollectorNode {
+  Mas: any;
+  Blueberry: any;
+  [key: string]: any; // Allows any other string properties
+}
+
+interface ProjectsNode {
+  GarbageCollector: GarbageCollectorNode;
+}
+
+interface RootNode {
+  Projects: ProjectsNode;
+}
+
+const longTreeTemplate: RootNode = {
   root: {
     Projects: {
       GarbageCollector: {
@@ -47,7 +61,19 @@ const longTreeTemplate = {
   },
 };
 
+// const longTreeTemplate = {
+//   root: {
+//     Projects: {
+//       GarbageCollector: {
+//         Mas: null,
+//         Blueberry: null,
+//       },
+//     },
+//   },
+// };
 
+
+export {longTreeTemplate};
 
 export const longTree = readTemplate(longTreeTemplate);
 export const shortTree = readTemplate(shortTreeTemplate);

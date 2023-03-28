@@ -13,9 +13,10 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-// import Tree from "../Tree/Tree";
+import Tree from "../Tree/Tree";
 import Sidebar from "../Designer/SideBar";
 import FlowLayout from "../Designer/FlowLayout";
+import FolderTree from "react-folder-tree";
 
 import "normalize.css";
 import "@blueprintjs/core/lib/css/blueprint.css";
@@ -26,15 +27,16 @@ import { TabList, TabContext, TabPanel } from "@mui/lab";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button, Tab } from "@mui/material";
 import FlowProvider from "../../store/FlowProvider";
-import { renderers as bpRenderers } from "react-complex-tree-blueprintjs-renderers";
-import {
-  StaticTreeDataProvider,
-  Tree,
-  TreeItem,
-  TreeItemIndex,
-  UncontrolledTreeEnvironment,
-} from "react-complex-tree";
-import { longTree } from "../Tree/data";
+// import { renderers as bpRenderers } from "react-complex-tree-blueprintjs-renderers";
+// import {
+//   ControlledTreeEnvironment,
+//   StaticTreeDataProvider,
+//   Tree,
+//   TreeItem,
+//   TreeItemIndex,
+//   UncontrolledTreeEnvironment,
+// } from "react-complex-tree";
+// import { longTree, longTreeTemplate, readTemplate } from "../Tree/data";
 import { useEdgeNames } from "../../store/flow-context";
 
 interface Node {
@@ -86,32 +88,23 @@ const initialNodes = [
   },
 ];
 
-const treeItems = {
-  root: {
-    index: "root",
-    isFolder: true,
-    children: ["child1", "child2"],
-    data: "Root item",
-  },
-  child1: {
-    index: "child1",
-    children: [] as any,
-    data: "Child item 1",
-  },
-  child2: {
-    index: "child2",
-    isFolder: true,
-    children: ["child3"] as any,
-    data: "Child item 2",
-  },
-  child3: {
-    index: "child3",
-    children: [] as any,
-    data: "Child item 3",
-  },
+const initState = {
+  name: "Project Files",
+  checked: 0.5, // half check: some children are checked
+  isOpen: true, // this folder is opened, we can see it's children
+  children: [
+    {
+      name: "Garbage Collector",
+      checked: 0.5,
+      isOpen: false,
+      children: [
+        { name: "MAS.mas", checked: 0, isFolder: false },
+        { name: "environment.env", checked: 0, isFolder: false },
+      ],
+    },
+  ],
 };
-
-const drawerWidth = 240;
+const drawerWidth = 255;
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   open?: boolean;
@@ -162,48 +155,108 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-const structure = [
+var tabArrInc: any = [];
+const treeStructure = [
   {
     type: "folder",
     name: "projects",
     files: [
       {
         type: "folder",
-        name: "project#1",
-        files: [{ type: "file", name: "dsml.flow" }],
+        name: "GarbageCollector",
+        files: [
+          { type: "file", name: "Mas.mas" },
+          { type: "file", name: "Environment.env" },
+        ],
       },
       { type: "file", name: "setup.js" },
     ],
   },
 ];
 
-interface TabData {
-  title: string;
-  content: React.ReactNode;
+interface ExactTree {
+  [key: string]: {
+    index: string;
+    canMove: boolean;
+    isFolder: boolean;
+    children?: string[];
+    data: string;
+    canRename: boolean;
+    countIndex: number;
+  };
 }
+
+const actualTree: ExactTree = {
+  root: {
+    index: "root",
+    canMove: true,
+    isFolder: true,
+    children: ["Projects"],
+    data: "root",
+    canRename: true,
+    countIndex: 2,
+  },
+  Projects: {
+    index: "Projects",
+    canMove: true,
+    isFolder: true,
+    children: ["GarbageCollector"],
+    data: "Projects",
+    canRename: true,
+    countIndex: 2,
+  },
+  GarbageCollector: {
+    index: "GarbageCollector",
+    canMove: true,
+    isFolder: true,
+    children: ["Mas", "Blueberry"],
+    data: "GarbageCollector",
+    canRename: true,
+    countIndex: 2,
+  },
+  Mas: {
+    index: "Mas",
+    canMove: true,
+    isFolder: false,
+    data: "Mas",
+    canRename: true,
+    countIndex: 2,
+  },
+  Blueberry: {
+    index: "Blueberry",
+    canMove: true,
+    isFolder: false,
+    data: "Blueberry",
+    canRename: true,
+    countIndex: 3,
+  },
+};
 
 function Home() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   // const { tabIndex, setTabIndex } = useEdgeNames();
   const [counter, setCounter] = useState(0);
-  const [focusedItem, setFocusedItem] = useState<TreeItem<string>>();
+  // const [focusedItem, setFocusedItem] = useState<TreeItem<string>>();
+  const [treeState, setTreeState] = useState(initState);
 
   const [selectedTab, setSelectedTab] = useState("Main");
 
   const [tabs, setTabs] = useState([]);
 
+  const [treeItems, setTreeItems] = useState<ExactTree>();
+
   const handleChange = (event: any, newValue: any) => {
     setSelectedTab(newValue);
+    console.log("setSelectedTab:", newValue);
   };
 
-  const handleTabOptions = (value: any) => {
-    setSelectedTab(value);
-    // setTabIndex(tabIndex + 1);
-    // setTabIndex(5);
-    // console.log("tabindex:", tabIndex);
-    console.log("setSelectedTab:", selectedTab);
-  };
+  // const handleTabOptions = (value: any) => {
+  //   setSelectedTab(value);
+  //   // setTabIndex(tabIndex + 1);
+  //   // setTabIndex(5);
+  //   // console.log("tabindex:", tabIndex);
+  // };
 
   const addTab = (treeFileName: any, itemIndex: any) => {
     // const value = `Blue Box ${itemIndex}`;
@@ -217,7 +270,40 @@ function Home() {
     // setTabs([...tabs, newTab]);
     setTabs((prevTabs) => [...prevTabs, newTab]);
 
-    handleTabOptions(treeFileName);
+    setSelectedTab(treeFileName);
+    // handleTabOptions(treeFileName);
+  };
+
+  const addNewTreeNode = (nodeName: any) => {
+    // let treeNodes = longTree.items;
+    nodeName = "Environment";
+
+    const treeNode = {
+      index: nodeName,
+      canMove: true,
+      isFolder: false,
+      data: nodeName,
+      canRename: true,
+      countIndex: 2,
+    };
+
+    actualTree[nodeName] = treeNode;
+    // const jsonArray = JSON.stringify([actualTree]);
+
+    setTreeItems(actualTree);
+    console.log("setted", treeItems);
+  };
+
+  const addFileNode = () => {
+    const newNode = { name: "new node", checked: 0, isFolder: false };
+    console.log("newNode", newNode);
+
+    // get the last children node
+    const lastNode = treeState.children[treeState.children.length - 1];
+
+    // add the new node to the last node's children array
+    lastNode.children.push(newNode);
+    setTreeState(treeState);
   };
 
   const handleTabClose = (event: any, value: any) => {
@@ -239,7 +325,7 @@ function Home() {
     setOpen(false);
   };
 
-  let [data, setData] = useState(structure);
+  let [data, setData] = useState(treeStructure);
 
   const handleUpdate = (state: any) => {
     console.log("update", state);
@@ -252,6 +338,40 @@ function Home() {
         return value;
       })
     );
+  };
+
+  const handleClick = (node: any) => {
+    console.log("handle click");
+    console.log(node.node.type);
+
+    console.log("ontree:");
+    // if (event) {
+    //   event.preventDefault();
+    setCounter((counter) => counter + 1);
+    // console.log("focused", counter);
+    // }
+    let lastItemOfTabArr = tabArrInc[tabArrInc.length - 1];
+    if (node.node.type === "file") {
+      if (lastItemOfTabArr.length > 0) {
+        console.log("addtab", lastItemOfTabArr);
+
+        const isInsideTabs = lastItemOfTabArr.filter(
+          (x: any) => x.value === node.node.name
+        ).length;
+        if (isInsideTabs === 1) {
+          return;
+        }
+
+        console.log("isInsideTabs:", isInsideTabs);
+      }
+
+      // setTabIndex(tabIndex + 1);
+      addTab(node.node.name, counter);
+    }
+
+    // if (node.node.type === "file") {
+    //   createNewTab(node.node.name);
+    // }
   };
 
   useLayoutEffect(() => {
@@ -268,21 +388,52 @@ function Home() {
   useEffect(() => {
     console.log("counter", counter);
     console.log("tabs", tabs);
-  }, [counter, tabs, selectedTab]);
+    console.log("treeState", treeState);
+    tabArrInc.push(tabs);
+  }, [counter, tabs, selectedTab, treeState]);
 
-  const onTreeItemDoubleClick = async (event: any, item: any) => {
+  useEffect(() => {
+    // setTreeItems(actualTree);
+    setTreeState(initState);
+  }, []);
+
+  const onTreeItemDoubleClick = async (item: any) => {
     // event.preventDefault();
     console.log("ontree:");
-    if (event) {
-      event.preventDefault();
-      setCounter((counter) => counter + 1);
-      // console.log("focused", counter);
-    }
+    // if (event) {
+    //   event.preventDefault();
+    setCounter((counter) => counter + 1);
+    // console.log("focused", counter);
+    // }
     if (item.isFolder === false) {
       // setTabIndex(tabIndex + 1);
       // console.log("tabindex:", tabIndex);
       addTab(item.data, counter);
     }
+  };
+
+  const onNameClick = ({ defaultOnClick, nodeData }: any) => {
+    defaultOnClick();
+    console.log("nodeData", nodeData);
+    //   event.preventDefault();
+    setCounter((counter) => counter + 1);
+    // console.log("focused", counter);
+    // }
+    if (nodeData.isFolder === false) {
+      // setTabIndex(tabIndex + 1);
+      // console.log("tabindex:", tabIndex);
+      addTab(nodeData.name, counter);
+    }
+
+    // const {
+    //   // internal data
+    //   path,
+    //   name,
+    //   checked,
+    //   isOpen,
+    //   // custom data
+    //   url,
+    // } = nodeData;
   };
 
   return (
@@ -353,17 +504,20 @@ function Home() {
           </DrawerHeader>
 
           <Divider />
-          <Button onClick={() => addTab("val", 1)}></Button>
+          <Button onClick={() => addFileNode()}></Button>
 
-          <UncontrolledTreeEnvironment<string>
+          {/* <UncontrolledTreeEnvironment<string>
             canDragAndDrop
             canDropOnFolder
             canReorderItems
             dataProvider={
-              new StaticTreeDataProvider(longTree.items, (item, data) => ({
-                ...item,
-                data,
-              }))
+              new StaticTreeDataProvider(
+                treeItems as ExactTree,
+                (item, data) => ({
+                  ...item,
+                  data,
+                })
+              )
             }
             getItemTitle={(item) => item.data}
             onFocusItem={(item) => setFocusedItem(item)}
@@ -376,7 +530,7 @@ function Home() {
                 actions,
                 renderFlags
               ) => ({
-                onClick: (e) => {
+                onDoubleClick: (e) => {
                   e.preventDefault();
                   onTreeItemDoubleClick(e, item);
                 },
@@ -399,16 +553,15 @@ function Home() {
             {...bpRenderers}
           >
             <Tree treeId="tree-1" rootItem="root" treeLabel="Projects tree" />
-          </UncontrolledTreeEnvironment>
+          </UncontrolledTreeEnvironment> */}
 
-          {/* <Tree
+          <Tree
             children={[]}
             data={data}
             onUpdate={handleUpdate}
-            activeTabIndex={counter}
-            onNodeClick={handleNodeClick}
+            onNodeClick={handleClick}
           />
-          {tabIndex} */}
+          {/* {tabIndex} */}
         </Drawer>
         <Main open={open}>
           <DrawerHeader />
@@ -510,7 +663,7 @@ function Home() {
           </Toolbar>
           <Divider />
 
-          <Sidebar />
+          <Sidebar selectedPageName={selectedTab.split(".")[1]} />
         </Drawer>
       </Box>
     </FlowProvider>

@@ -113,16 +113,19 @@ const Sidebar = (props: any) => {
             <Tooltip title="Action Node">
               <PlayCircleFilledWhiteIcon />
             </Tooltip>
-          </Item>
-          <Item
-            onDragStart={(event: any) => onDragStart(event, "default", "event")}
-            draggable
-          >
-            {" "}
-            <Tooltip title="Event Node">
-              <EventIcon />
-            </Tooltip>
-          </Item>
+          </Item>{" "}
+          {props.selectedPageName === "env" && (
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "event")
+              }
+              draggable
+            >
+              <Tooltip title="Event Node">
+                <EventIcon />
+              </Tooltip>
+            </Item>
+          )}
         </Stack>
         <Divider variant="middle" />
         <br />
