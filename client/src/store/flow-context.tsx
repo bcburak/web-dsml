@@ -4,6 +4,12 @@ export enum EdgeName {
   Implements = "Implements",
   InteractsWith = "InteractsWith",
   SubCapability = "SubCapability",
+  PostEvents = "PostEvents",
+  HasContext = "HasContext",
+  IsTriggered = "IsTriggered",
+  Use = "Use",
+  AddBelief = "AddBelief",
+  DelBelief = "DelBelief",
 }
 
 // const [nodeName, setNodeName] = useState("Node 1");

@@ -258,13 +258,15 @@ function Home() {
   //   // console.log("tabindex:", tabIndex);
   // };
 
-  const addTab = (treeFileName: any, itemIndex: any) => {
+  const addTab = (parentNode: string, treeFileName: any, itemIndex: any) => {
     // const value = `Blue Box ${itemIndex}`;
     console.log("treeFileName:", treeFileName);
     console.log("itemIndex:", itemIndex);
     const newTab = {
       value: treeFileName,
-      child: () => <FlowLayout fileName={treeFileName} />,
+      child: () => (
+        <FlowLayout fileName={parentNode.concat("_", treeFileName)} />
+      ),
       index: itemIndex,
     };
     // setTabs([...tabs, newTab]);
@@ -341,9 +343,12 @@ function Home() {
   };
 
   const handleClick = (node: any) => {
-    console.log("handle click");
+    let parentNode: string = "";
+    console.log("parent node", node.node.parentNode.name);
     console.log(node.node.type);
-
+    if (node.node.parentNode.name !== "undefined") {
+      parentNode = node.node.parentNode.name;
+    }
     console.log("ontree:");
     // if (event) {
     //   event.preventDefault();
@@ -366,7 +371,7 @@ function Home() {
       }
 
       // setTabIndex(tabIndex + 1);
-      addTab(node.node.name, counter);
+      addTab(parentNode, node.node.name, counter);
     }
 
     // if (node.node.type === "file") {
@@ -397,44 +402,44 @@ function Home() {
     setTreeState(initState);
   }, []);
 
-  const onTreeItemDoubleClick = async (item: any) => {
-    // event.preventDefault();
-    console.log("ontree:");
-    // if (event) {
-    //   event.preventDefault();
-    setCounter((counter) => counter + 1);
-    // console.log("focused", counter);
-    // }
-    if (item.isFolder === false) {
-      // setTabIndex(tabIndex + 1);
-      // console.log("tabindex:", tabIndex);
-      addTab(item.data, counter);
-    }
-  };
+  // const onTreeItemDoubleClick = async (item: any) => {
+  //   // event.preventDefault();
+  //   console.log("ontree:");
+  //   // if (event) {
+  //   //   event.preventDefault();
+  //   setCounter((counter) => counter + 1);
+  //   // console.log("focused", counter);
+  //   // }
+  //   if (item.isFolder === false) {
+  //     // setTabIndex(tabIndex + 1);
+  //     // console.log("tabindex:", tabIndex);
+  //     addTab(item.data, counter);
+  //   }
+  // };
 
-  const onNameClick = ({ defaultOnClick, nodeData }: any) => {
-    defaultOnClick();
-    console.log("nodeData", nodeData);
-    //   event.preventDefault();
-    setCounter((counter) => counter + 1);
-    // console.log("focused", counter);
-    // }
-    if (nodeData.isFolder === false) {
-      // setTabIndex(tabIndex + 1);
-      // console.log("tabindex:", tabIndex);
-      addTab(nodeData.name, counter);
-    }
+  // const onNameClick = ({ defaultOnClick, nodeData }: any) => {
+  //   defaultOnClick();
+  //   console.log("nodeData", nodeData);
+  //   //   event.preventDefault();
+  //   setCounter((counter) => counter + 1);
+  //   // console.log("focused", counter);
+  //   // }
+  //   if (nodeData.isFolder === false) {
+  //     // setTabIndex(tabIndex + 1);
+  //     // console.log("tabindex:", tabIndex);
+  //     addTab(nodeData.name, counter);
+  //   }
 
-    // const {
-    //   // internal data
-    //   path,
-    //   name,
-    //   checked,
-    //   isOpen,
-    //   // custom data
-    //   url,
-    // } = nodeData;
-  };
+  //   // const {
+  //   //   // internal data
+  //   //   path,
+  //   //   name,
+  //   //   checked,
+  //   //   isOpen,
+  //   //   // custom data
+  //   //   url,
+  //   // } = nodeData;
+  // };
 
   return (
     <FlowProvider>
@@ -504,7 +509,7 @@ function Home() {
           </DrawerHeader>
 
           <Divider />
-          <Button onClick={() => addFileNode()}></Button>
+          {/* <Button onClick={() => addFileNode()}></Button> */}
 
           {/* <UncontrolledTreeEnvironment<string>
             canDragAndDrop

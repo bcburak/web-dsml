@@ -82,39 +82,45 @@ const Sidebar = (props: any) => {
       <Divider variant="middle" />
       <br />
       <Box>
-        <Stack direction="row" spacing={3}>
-          <Item
-            onDragStart={(event: any) => onDragStart(event, "default", "agent")}
-            draggable
-          >
-            {" "}
-            <Tooltip title="Agent Node">
-              <AccessibilityNewIcon />
-            </Tooltip>
-          </Item>
-          <Item
-            onDragStart={(event: any) =>
-              onDragStart(event, "default", "belief")
-            }
-            draggable
-          >
-            {" "}
-            <Tooltip title="Belief Node">
-              <FireplaceIcon />
-            </Tooltip>
-          </Item>
-          <Item
-            onDragStart={(event: any) =>
-              onDragStart(event, "default", "action")
-            }
-            draggable
-          >
-            {" "}
-            <Tooltip title="Action Node">
-              <PlayCircleFilledWhiteIcon />
-            </Tooltip>
-          </Item>{" "}
-          {props.selectedPageName === "env" && (
+        {props.selectedPageName === "mas" && (
+          <Stack direction="row" spacing={3}>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "agent")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Agent Node">
+                <AccessibilityNewIcon />
+              </Tooltip>
+            </Item>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "capability")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Capability Node">
+                <PlayCircleFilledWhiteIcon />
+              </Tooltip>
+            </Item>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "environment")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Environment Node">
+                <PlayCircleFilledWhiteIcon />
+              </Tooltip>
+            </Item>
+          </Stack>
+        )}
+        {props.selectedPageName === "env" && (
+          <Stack direction="row" spacing={3}>
             <Item
               onDragStart={(event: any) =>
                 onDragStart(event, "default", "event")
@@ -125,41 +131,104 @@ const Sidebar = (props: any) => {
                 <EventIcon />
               </Tooltip>
             </Item>
-          )}
-        </Stack>
-        <Divider variant="middle" />
-        <br />
-        <Stack direction="row" spacing={3}>
-          <Item
-            onDragStart={(event: any) => onDragStart(event, "default", "plan")}
-            draggable
-          >
-            {" "}
-            <Tooltip title="plan Node">
-              <NextPlanIcon />
-            </Tooltip>
-          </Item>
-          <Item
-            onDragStart={(event: any) =>
-              onDragStart(event, "default", "Environment")
-            }
-            draggable
-          >
-            {" "}
-            <Tooltip title="Environment Node">
-              <CycloneIcon />
-            </Tooltip>
-          </Item>
-          <Item
-            onDragStart={(event: any) => onDragStart(event, "default", "Mas")}
-            draggable
-          >
-            {" "}
-            <Tooltip title="Mas Node">
-              <GroupsIcon />
-            </Tooltip>
-          </Item>
-        </Stack>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "operation")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Operation Node">
+                <PlayCircleFilledWhiteIcon />
+              </Tooltip>
+            </Item>
+          </Stack>
+        )}
+        {props.selectedPageName === "cap" && (
+          <Stack direction="row" spacing={3}>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "belief")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Belief Node">
+                <FireplaceIcon />
+              </Tooltip>
+            </Item>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "plan")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Plan Node">
+                <NextPlanIcon />
+              </Tooltip>
+            </Item>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "subCapability")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="SubCapability Node">
+                <PlayCircleFilledWhiteIcon />
+              </Tooltip>
+            </Item>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "relationNode")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Relation Node">
+                <PlayCircleFilledWhiteIcon />
+              </Tooltip>
+            </Item>
+          </Stack>
+        )}
+        {props.selectedPageName === "pln" && (
+          <Stack direction="row" spacing={3}>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "action")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Action Node">
+                <PlayCircleFilledWhiteIcon />
+              </Tooltip>
+            </Item>{" "}
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "message")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Message Node">
+                <NextPlanIcon />
+              </Tooltip>
+            </Item>
+            <Item
+              onDragStart={(event: any) =>
+                onDragStart(event, "default", "relationNode")
+              }
+              draggable
+            >
+              {" "}
+              <Tooltip title="Relation Node">
+                <PlayCircleFilledWhiteIcon />
+              </Tooltip>
+            </Item>
+          </Stack>
+        )}
       </Box>
 
       <Divider variant="middle" />
@@ -178,27 +247,76 @@ const Sidebar = (props: any) => {
       </Box>
       <Divider variant="middle" />
       <br />
-
-      <Stack direction="row" spacing={2}>
-        <Item onClick={(event: any) => setEdgeName(EdgeName.Implements)}>
-          {" "}
-          <Tooltip title="Implements">
-            <DragHandleIcon />
-          </Tooltip>
-        </Item>
-        <Item onClick={() => setEdgeName(EdgeName.InteractsWith)}>
-          {" "}
-          <Tooltip title="interactsWith">
-            <DragHandleIcon />
-          </Tooltip>
-        </Item>
-        <Item onClick={(event: any) => setEdgeName(EdgeName.SubCapability)}>
-          {" "}
-          <Tooltip title="subCapability">
-            <DragHandleIcon />
-          </Tooltip>
-        </Item>
-      </Stack>
+      {props.selectedPageName === "mas" && (
+        <Stack direction="row" spacing={2}>
+          <Item onClick={(event: any) => setEdgeName(EdgeName.Implements)}>
+            {" "}
+            <Tooltip title="Implements">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+          <Item onClick={() => setEdgeName(EdgeName.InteractsWith)}>
+            {" "}
+            <Tooltip title="interactsWith">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+          <Item onClick={(event: any) => setEdgeName(EdgeName.SubCapability)}>
+            {" "}
+            <Tooltip title="subCapability">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+        </Stack>
+      )}
+      {props.selectedPageName === "env" && (
+        <Stack direction="row" spacing={2}>
+          <Item onClick={(event: any) => setEdgeName(EdgeName.PostEvents)}>
+            {" "}
+            <Tooltip title="PostEvents">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+        </Stack>
+      )}
+      {props.selectedPageName === "cap" && (
+        <Stack direction="row" spacing={2}>
+          <Item onClick={(event: any) => setEdgeName(EdgeName.HasContext)}>
+            {" "}
+            <Tooltip title="HasContext">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+          <Item onClick={(event: any) => setEdgeName(EdgeName.IsTriggered)}>
+            {" "}
+            <Tooltip title="IsTriggered">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+        </Stack>
+      )}
+      {props.selectedPageName === "pln" && (
+        <Stack direction="row" spacing={2}>
+          <Item onClick={(event: any) => setEdgeName(EdgeName.Use)}>
+            {" "}
+            <Tooltip title="Use">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+          <Item onClick={(event: any) => setEdgeName(EdgeName.AddBelief)}>
+            {" "}
+            <Tooltip title="AddBelief">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+          <Item onClick={(event: any) => setEdgeName(EdgeName.DelBelief)}>
+            {" "}
+            <Tooltip title="DelBelief">
+              <DragHandleIcon />
+            </Tooltip>
+          </Item>
+        </Stack>
+      )}
       <Divider />
       <br />
       <Stack direction="row" spacing={200}>
