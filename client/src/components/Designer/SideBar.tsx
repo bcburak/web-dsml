@@ -7,8 +7,13 @@ import Paper from "@mui/material/Paper";
 import {
   Box,
   Button,
+  ButtonGroup,
   Divider,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
   Tooltip,
   Typography,
@@ -16,12 +21,21 @@ import {
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import FireplaceIcon from "@mui/icons-material/Fireplace";
 import EventIcon from "@mui/icons-material/Event";
-import NextPlanIcon from "@mui/icons-material/NextPlan";
-import CycloneIcon from "@mui/icons-material/Cyclone";
-import GroupsIcon from "@mui/icons-material/Groups";
+import CycloneOutlined from "@mui/icons-material/CycloneOutlined";
+import PsychologyOutlinedIcon from "@mui/icons-material/PsychologyOutlined";
+import DonutSmallOutlinedIcon from "@mui/icons-material/DonutSmallOutlined";
+import MarkAsUnreadOutlinedIcon from "@mui/icons-material/MarkAsUnreadOutlined";
+import CompareArrowsOutlinedIcon from "@mui/icons-material/CompareArrowsOutlined";
+import DisplaySettingsOutlinedIcon from "@mui/icons-material/DisplaySettingsOutlined";
+import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { EdgeName, useEdgeNames } from "../../store/flow-context";
 import httpCommon from "../../utils/http-common";
+import {
+  convertEnvironmentModelToJava,
+  convertMasModelToJava,
+  createAndDownloadFiles,
+} from "../../utils/convertCode";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -32,38 +46,151 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const Sidebar = (props: any) => {
-  // const [downloadClicked, setdownloadClicked] = useState(false);
-
   const { setEdgeName, setdownloadClicked, reactFlowInstance } = useEdgeNames();
   const { nodeName, setNodeName } = useEdgeNames();
+  const [selectedProject, setSelectedProject] = React.useState("");
+
+  const handleChange = (event: any) => {
+    setSelectedProject(event.target.value);
+  };
 
   const onDragStart = (event: any, nodeType: any, nodeName: string) => {
     var obj = { type: nodeType, name: nodeName };
     event.dataTransfer.setData("application/reactflow", JSON.stringify(obj));
     event.dataTransfer.effectAllowed = "move";
   };
-  function onDownloadClick(): void {
-    const flow = reactFlowInstance.toObject();
-    const fileData = JSON.stringify(flow);
-    console.log("instance", flow);
-    localStorage.setItem("reactFlowInstance", fileData);
-    httpCommon.post("/userData", fileData);
-    const blob = new Blob([fileData], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.download = "flowFile.json";
-    link.href = url;
-    link.click();
+  function onModelExportClick(): void {
+    // iterate localStorage
+    var keyValuePairs = getAllValuesWithKeyName(selectedProject);
+
+    const files = keyValuePairs.map((pair) => {
+      return { filename: pair.key, content: pair.value };
+    });
+    createAndDownloadFiles(files, "models");
   }
 
-  // if (reactFlowInstance && isDownloadActive) {
-  //   console.log("active");
-  //   const flow = reactFlowInstance.toObject();
-  //   localStorage.setItem(reactFlowInstance, JSON.stringify(flow));
-  // }
-  // const createFlowFile = () => {
+  const getProjectNamesFromLocalStorage = () => {
+    let projectNames: any = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      // set iteration key name
+      var key = localStorage.key(i);
 
-  // };
+      if (key.includes(".")) {
+        var name = key.split("_")[0];
+
+        if (!projectNames.includes(name)) {
+          projectNames.push(name);
+        }
+        console.log("key: ", key);
+        console.log("projects: ", projectNames);
+      }
+      // console.log the iteration key and value
+      // console.log("Key: " + key + ", Value: " + value);
+    }
+    return projectNames;
+  };
+  function getAllValuesWithKeyName(keyName: any) {
+    var matchingValues = [];
+
+    for (var i = 0; i < localStorage.length; i++) {
+      var key = localStorage.key(i);
+
+      if (key.includes(keyName)) {
+        var value = localStorage.getItem(key);
+        matchingValues.push({ key: key, value: value });
+      }
+    }
+
+    return matchingValues;
+  }
+  // function getAllValuesWithKeyName(keyName: any) {
+  //   var matchingValues = [];
+
+  //   for (var i = 0; i < localStorage.length; i++) {
+  //     var key = localStorage.key(i);
+
+  //     if (key.includes(keyName)) {
+  //       var value = localStorage.getItem(key);
+  //       matchingValues.push(value);
+  //     }
+  //   }
+
+  //   return matchingValues;
+  // }
+  function onCodeExportCodeClick(): void {
+    let masFileName: any;
+    let environmentFileName: any;
+
+    var keyValuePairs = getAllValuesWithKeyName(selectedProject);
+    for (let index = 0; index < keyValuePairs.length; index++) {
+      const element = keyValuePairs[index];
+      console.log("keyval", keyValuePairs);
+      if (element.key.includes(".mas")) {
+        masFileName = element.key;
+      }
+      if (element.key.includes(".env")) {
+        environmentFileName = element.key;
+      }
+    }
+    console.log("mas", masFileName);
+    console.log("environmentName", environmentFileName);
+
+    var environmentValue = keyValuePairs.find(function (item) {
+      return item.key === environmentFileName;
+    });
+
+    var masValue = keyValuePairs.find(function (item) {
+      return item.key === masFileName;
+    });
+    console.log("masValue", masValue.value);
+    console.log("environmentValue", environmentValue.value);
+
+    const params = extractLabelsFromJSON(environmentValue.value);
+    const environmentNodeName = extractLabelsFromJSON(masValue.value)[0];
+    console.log("environmentNodeName", environmentNodeName);
+    console.log("params", params);
+
+    const parameters = ["goToGarbage", "goToBurner", "startBurn", "reTryTrash"];
+
+    var masCode = convertMasModelToJava(
+      masFileName.split("_")[1].split(".")[0],
+      environmentNodeName,
+      params
+    );
+    var envCode = convertEnvironmentModelToJava(environmentNodeName, params);
+
+    const files = [
+      {
+        filename: masFileName.split("_")[1].split(".")[0] + ".java",
+        content: masCode,
+      },
+      { filename: environmentNodeName + ".java", content: envCode },
+    ];
+    createAndDownloadFiles(files, "codes");
+  }
+
+  function extractLabelsFromJSON(jsonString: any) {
+    var json = JSON.parse(jsonString);
+    var nodes = json.nodes;
+    console.log("nodes", nodes);
+    var labels = [];
+
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      // console.log("node", node.data);
+      // var data = JSON.parse(node.data);
+      var type = JSON.parse(node.type);
+      var label = node.data.label;
+      // console.log("label", label);
+      // console.log("label123", node.data.label);
+      if (type.name === "operation" || type.name === "environment")
+        labels.push(label);
+    }
+
+    return labels;
+  }
+
+  const names = getProjectNamesFromLocalStorage();
 
   return (
     <Box sx={{ width: "100%", maxWidth: 360 }}>
@@ -103,7 +230,7 @@ const Sidebar = (props: any) => {
             >
               {" "}
               <Tooltip title="Capability Node">
-                <PlayCircleFilledWhiteIcon />
+                <PsychologyOutlinedIcon />
               </Tooltip>
             </Item>
             <Item
@@ -114,7 +241,7 @@ const Sidebar = (props: any) => {
             >
               {" "}
               <Tooltip title="Environment Node">
-                <PlayCircleFilledWhiteIcon />
+                <CycloneOutlined />
               </Tooltip>
             </Item>
           </Stack>
@@ -139,7 +266,7 @@ const Sidebar = (props: any) => {
             >
               {" "}
               <Tooltip title="Operation Node">
-                <PlayCircleFilledWhiteIcon />
+                <DonutSmallOutlinedIcon />
               </Tooltip>
             </Item>
           </Stack>
@@ -165,7 +292,7 @@ const Sidebar = (props: any) => {
             >
               {" "}
               <Tooltip title="Plan Node">
-                <NextPlanIcon />
+                <RateReviewOutlinedIcon />
               </Tooltip>
             </Item>
             <Item
@@ -176,7 +303,7 @@ const Sidebar = (props: any) => {
             >
               {" "}
               <Tooltip title="SubCapability Node">
-                <PlayCircleFilledWhiteIcon />
+                <DisplaySettingsOutlinedIcon />
               </Tooltip>
             </Item>
             <Item
@@ -187,7 +314,7 @@ const Sidebar = (props: any) => {
             >
               {" "}
               <Tooltip title="Relation Node">
-                <PlayCircleFilledWhiteIcon />
+                <CompareArrowsOutlinedIcon />
               </Tooltip>
             </Item>
           </Stack>
@@ -213,7 +340,7 @@ const Sidebar = (props: any) => {
             >
               {" "}
               <Tooltip title="Message Node">
-                <NextPlanIcon />
+                <MarkAsUnreadOutlinedIcon />
               </Tooltip>
             </Item>
             <Item
@@ -224,7 +351,7 @@ const Sidebar = (props: any) => {
             >
               {" "}
               <Tooltip title="Relation Node">
-                <PlayCircleFilledWhiteIcon />
+                <CompareArrowsOutlinedIcon />
               </Tooltip>
             </Item>
           </Stack>
@@ -246,7 +373,7 @@ const Sidebar = (props: any) => {
         </Typography>
       </Box>
       <Divider variant="middle" />
-      <br />
+
       {props.selectedPageName === "mas" && (
         <Stack direction="row" spacing={2}>
           <Item onClick={(event: any) => setEdgeName(EdgeName.Implements)}>
@@ -319,15 +446,42 @@ const Sidebar = (props: any) => {
       )}
       <Divider />
       <br />
-      <Stack direction="row" spacing={200}>
+      <FormControl sx={{ m: 1, minWidth: 230 }}>
+        <InputLabel id="demo-simple-select-helper-label">Projects</InputLabel>
+
+        <Select
+          labelId="demo-simple-select-helper-label"
+          id="demo-simple-select-helper"
+          value={selectedProject}
+          onChange={handleChange}
+        >
+          {names.map((name: any) => (
+            <MenuItem key={name} value={name}>
+              {name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
+      <br />
+      <Stack direction="row" spacing={2}>
         <Button
-          onClick={() => onDownloadClick()}
-          variant="contained"
+          onClick={() => onModelExportClick()}
+          variant="outlined"
           endIcon={<CloudDownloadIcon />}
         >
-          Save & Download
+          Export Modal
+        </Button>
+        <br />
+        <Button
+          onClick={() => onCodeExportCodeClick()}
+          variant="outlined"
+          endIcon={<CloudDownloadIcon />}
+        >
+          Export Code
         </Button>
       </Stack>
+
       <br />
       <Divider variant="middle" />
       <Box sx={{ my: 1, mx: 1 }}>

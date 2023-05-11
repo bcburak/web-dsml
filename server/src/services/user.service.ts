@@ -2,6 +2,7 @@ import { omit } from 'lodash';
 import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose';
 import config from 'config';
 import userModel, { User } from '../models/user.model';
+import userProfileModel, { UserProfile } from '../models/userprofile.model';
 import { excludedFields } from '../controllers/auth.controller';
 import { signJwt } from '../utils/jwt';
 import redisClient from '../utils/connectRedis';
@@ -42,6 +43,19 @@ export const findAndUpdateUser = async (
   options: QueryOptions
 ) => {
   return await userModel.findOneAndUpdate(query, update, options);
+};
+
+
+// CreateUser service
+export const createUserProfile = async (input: Partial<UserProfile>) => {
+  const user = await userProfileModel.create(input);
+  return omit(user.toJSON(), excludedFields);
+};
+
+// Find User by Id
+export const findUserProfileById = async (id: string) => {
+  const user = await userProfileModel.findById(id).lean();
+  return omit(user, excludedFields);
 };
 
 // Sign Token

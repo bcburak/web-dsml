@@ -31,7 +31,7 @@ import {
     @prop({ unique: true, required: true })
     email: string;
   
-    @prop({ required: true, minlength: 8, maxLength: 32, select: false })
+    @prop({ required: false, minlength: 8, maxLength: 32, select: false })
     password: string;
   
     @prop({ default: 'user' })

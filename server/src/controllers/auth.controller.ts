@@ -80,6 +80,11 @@ export const loginHandler = async (
   next: NextFunction
 ) => {
   try {
+
+    // await createUser({
+    //   email: req.body.email,
+    //   password: req.body.password,
+    // });
     // Get the user from the collection
     const user = await findUser({ email: req.body.email });
 
@@ -221,17 +226,17 @@ export const googleOauthHandler = async (
     console.log("verified_email",verified_email);
 
     // Update user if user already exist or create new user
-    // const user = await findAndUpdateUser(
-    //   { email },
-    //   {
-    //     name,
-    //     photo: picture,
-    //     email,
-    //     provider: 'Google',
-    //     verified: true,
-    //   },
-    //   { upsert: true, runValidators: false, new: true, lean: true }
-    // );
+    const user = await findAndUpdateUser(
+      { email },
+      {
+        name,
+        photo: picture,
+        email,
+        provider: 'Google',
+        verified: true,
+      },
+      { upsert: true, runValidators: false, new: true, lean: true }
+    );
     // const user = await createUser({
     //   email,
     //   name,

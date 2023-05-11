@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
-import config from 'config';
+mongoose.set('strictQuery', false);
+var config = require('config');
 
-const dbUrl = `mongodb://${config.get('dbName')}:${config.get(
-  'dbPass'
-)}@web-flow-dsml-cluster.cmisbke.mongodb.net/?retryWrites=true&w=majority`;
+const dbUrl = `mongodb+srv://webflowdb:wvWoEvkHUHgcSKGP@web-flow-dsml-cluster.cmisbke.mongodb.net/?retryWrites=true&w=majority`;
+
+// mongodb+srv://webflowdb:wvWoEvkHUHgcSKGP@web-flow-dsml-cluster.cmisbke.mongodb.net/?retryWrites=true&w=majority
+
 
 const connectDB = async () => {
   try {

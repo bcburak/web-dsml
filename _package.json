@@ -1,0 +1,32 @@
+{
+    "name": "flow-web-ml",
+    "version": "1.0.0",
+    "description": "The Node React Startup Structure",
+    "main": "server/app.js",
+    "scripts": {
+        "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+        "start:prod": "cd server && npm run start",
+        "start:dev": "concurrently \"npm run server\" \"npm run client\" -k",
+        "client": "cd client && npm run start",
+        "server": "cd server && npm run dev",
+        "install": "cd client && npm install && cd ../server && npm install",
+        "build": "cd client && npm run build"
+    },
+    "author": "Burak Celik",
+    "license": "MIT",
+    "devDependencies": {
+        "concurrently": "^4.1.2"
+    },
+    "dependencies": {
+        "@fontsource/roboto": "^4.5.8",
+        "@mui/icons-material": "^5.11.0",
+        "@mui/lab": "^5.0.0-alpha.115",
+        "@mui/material": "^5.11.3",
+        "@mui/styled-engine-sc": "^5.11.0",
+        "if-env": "^1.0.4",
+        "react-keyed-file-browser": "^1.14.0",
+        "sandpack-file-explorer": "^0.0.4",
+        "styled-components": "^5.3.6",
+        "uuid": "^9.0.0"
+    }
+}

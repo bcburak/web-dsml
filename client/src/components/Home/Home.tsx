@@ -349,7 +349,6 @@ function Home() {
     if (node.node.parentNode.name !== "undefined") {
       parentNode = node.node.parentNode.name;
     }
-    console.log("ontree:");
     // if (event) {
     //   event.preventDefault();
     setCounter((counter) => counter + 1);
