@@ -32,6 +32,7 @@ import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { EdgeName, useEdgeNames } from "../../store/flow-context";
 import httpCommon from "../../utils/http-common";
 import {
+  convertAgentsToAslFile,
   convertEnvironmentModelToJava,
   convertMasModelToJava,
   createAndDownloadFiles,
@@ -49,6 +50,35 @@ const Sidebar = (props: any) => {
   const { setEdgeName, setdownloadClicked, reactFlowInstance } = useEdgeNames();
   const { nodeName, setNodeName } = useEdgeNames();
   const [selectedProject, setSelectedProject] = React.useState("");
+
+  interface Node {
+    width: number;
+    height: number;
+    id: string;
+    type: string;
+    position: { x: number; y: number };
+    data: { label: string };
+    selected: boolean;
+    positionAbsolute: { x: number; y: number };
+    dragging: boolean;
+  }
+
+  interface Edge {
+    source: string;
+    sourceHandle: null;
+    target: string;
+    targetHandle: null;
+    type: string;
+    markerStart: { type: string };
+    label: string;
+    deletable: boolean;
+    id: string;
+  }
+
+  interface Data {
+    nodes: Node[];
+    edges: Edge[];
+  }
 
   const handleChange = (event: any) => {
     setSelectedProject(event.target.value);
@@ -69,8 +99,19 @@ const Sidebar = (props: any) => {
     createAndDownloadFiles(files, "models");
   }
 
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    // Simulating an asynchronous API call to fetch the array data
+    setTimeout(() => {
+      const dynamicArray = getProjectNamesFromLocalStorage; //["Option 1", "Option 2", "Option 3"];
+      setOptions(dynamicArray);
+    }, 2000); // Adjust the delay as needed
+  }, []);
+
   const getProjectNamesFromLocalStorage = () => {
     let projectNames: any = [];
+    console.log("local;", localStorage.length);
     for (var i = 0; i < localStorage.length; i++) {
       // set iteration key name
       var key = localStorage.key(i);
@@ -132,7 +173,7 @@ const Sidebar = (props: any) => {
         environmentFileName = element.key;
       }
     }
-    console.log("mas", masFileName);
+    console.log("masFileName", masFileName);
     console.log("environmentName", environmentFileName);
 
     var environmentValue = keyValuePairs.find(function (item) {
@@ -146,11 +187,11 @@ const Sidebar = (props: any) => {
     console.log("environmentValue", environmentValue.value);
 
     const params = extractLabelsFromJSON(environmentValue.value);
-    const environmentNodeName = extractLabelsFromJSON(masValue.value)[0];
+    const environmentNodeName = environmentFileName.split("_")[1].split(".")[0]; //extractLabelsFromJSON(masValue.value)[0];
     console.log("environmentNodeName", environmentNodeName);
     console.log("params", params);
 
-    const parameters = ["goToGarbage", "goToBurner", "startBurn", "reTryTrash"];
+    // const parameters = ["goToGarbage", "goToBurner", "startBurn", "reTryTrash"];
 
     var masCode = convertMasModelToJava(
       masFileName.split("_")[1].split(".")[0],
@@ -159,16 +200,44 @@ const Sidebar = (props: any) => {
     );
     var envCode = convertEnvironmentModelToJava(environmentNodeName, params);
 
-    const files = [
-      {
-        filename: masFileName.split("_")[1].split(".")[0] + ".java",
-        content: masCode,
-      },
-      { filename: environmentNodeName + ".java", content: envCode },
-    ];
+    var files = [];
+
+    files.push({
+      filename: masFileName.split("_")[1].split(".")[0] + ".java",
+      content: masCode,
+    });
+    files.push({ filename: environmentNodeName + ".java", content: envCode });
+
+    var agentNames = extractLabelsFromJSONforAgents(masValue.value);
+    for (var i = 0; i < agentNames.length; i++) {
+      var sourceLabel = getRelatedLabel(agentNames[i], masValue.value);
+
+      console.log("source", sourceLabel);
+
+      // eslint-disable-next-line no-loop-func
+      var capabilityData = keyValuePairs.find(function (item) {
+        return item.key.includes(sourceLabel + ".cap");
+      });
+      console.log("capabilityData", capabilityData.value);
+      var planName = extractLabelsFromJSONforCapability(capabilityData.value);
+      console.log("planName" + [i], planName);
+
+      var fileName = agentNames[i] + ".asl";
+      var content = convertAgentsToAslFile(agentNames[i], planName); //"This is the content of " + agentName + " file.";
+
+      files.push({ filename: fileName, content: content });
+    }
+
+    // for (var i = 0; i < agentNames.length; i++) {
+    //   var agentName = agentNames[i];
+    //   var fileName = agentName + ".asl";
+    //   var content = convertAgentsToAslFile(agentName); //"This is the content of " + agentName + " file.";
+
+    //   files.push({ filename: fileName, content: content });
+    // }
     createAndDownloadFiles(files, "codes");
   }
-
+  // TODO: Refactor for generic method all node types
   function extractLabelsFromJSON(jsonString: any) {
     var json = JSON.parse(jsonString);
     var nodes = json.nodes;
@@ -190,7 +259,103 @@ const Sidebar = (props: any) => {
     return labels;
   }
 
-  const names = getProjectNamesFromLocalStorage();
+  function extractLabelsFromJSONforAgents(jsonString: any) {
+    var json = JSON.parse(jsonString);
+    var nodes = json.nodes;
+    console.log("nodes", nodes);
+    var labels = [];
+
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      // console.log("node", node.data);
+      // var data = JSON.parse(node.data);
+      var type = JSON.parse(node.type);
+      var label = node.data.label;
+      // console.log("label", label);
+      // console.log("label123", node.data.label);
+      if (type.name === "agent") labels.push(label);
+    }
+
+    return labels;
+  }
+
+  function extractLabelsFromJSONforCapability(jsonString: any) {
+    var json = JSON.parse(jsonString);
+    var nodes = json.nodes;
+    console.log("nodes", nodes);
+    var planName = null;
+
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
+      // console.log("node", node.data);
+      // var data = JSON.parse(node.data);
+      var type = JSON.parse(node.type);
+      var label = node.data.label;
+      // console.log("label", label);
+      // console.log("label123", node.data.label);
+      if (type.name === "plan") planName = label;
+      // labels.push(label);
+    }
+
+    return planName;
+  }
+
+  function getRelatedLabel(agent: string, jsonString: any): string | null {
+    const data: Data = JSON.parse(jsonString);
+    let collectorId: string | null = null;
+    data.nodes.forEach((node) => {
+      if (node.data.label === agent) {
+        collectorId = node.id;
+        return;
+      }
+    });
+
+    let sourceValue: string | null = null;
+    data.edges.forEach((edge) => {
+      if (edge.target === collectorId) {
+        sourceValue = edge.source;
+        return;
+      }
+    });
+
+    let relatedLabel: string | null = null;
+    data.nodes.forEach((node) => {
+      if (node.id === sourceValue) {
+        relatedLabel = node.data.label;
+        return;
+      }
+    });
+
+    return relatedLabel;
+  }
+  // function getRelatedLabel(agent: any, jsonString: any) {
+  //   const data = JSON.parse(jsonString);
+  //   let collectorId: null = null;
+  //   data.nodes.forEach((node: { data: { label: any }; id: null }) => {
+  //     if (node.data.label === agent) {
+  //       collectorId = node.id;
+  //       return;
+  //     }
+  //   });
+
+  //   let sourceValue: null = null;
+  //   data.edges.forEach((edge: { target: null; source: null }) => {
+  //     if (edge.target === collectorId) {
+  //       sourceValue = edge.source;
+  //       return;
+  //     }
+  //   });
+
+  //   let relatedLabel = null;
+  //   data.nodes.forEach((node: { id: null; data: { label: any } }) => {
+  //     if (node.id === sourceValue) {
+  //       relatedLabel = node.data.label;
+  //       return;
+  //     }
+  //   });
+
+  //   return relatedLabel;
+  // }
 
   return (
     <Box sx={{ width: "100%", maxWidth: 360 }}>
@@ -449,15 +614,10 @@ const Sidebar = (props: any) => {
       <FormControl sx={{ m: 1, minWidth: 230 }}>
         <InputLabel id="demo-simple-select-helper-label">Projects</InputLabel>
 
-        <Select
-          labelId="demo-simple-select-helper-label"
-          id="demo-simple-select-helper"
-          value={selectedProject}
-          onChange={handleChange}
-        >
-          {names.map((name: any) => (
-            <MenuItem key={name} value={name}>
-              {name}
+        <Select>
+          {options.map((option, index) => (
+            <MenuItem key={index} value={option}>
+              {option}
             </MenuItem>
           ))}
         </Select>

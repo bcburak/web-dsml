@@ -85,6 +85,23 @@ function convertEnvironmentModelToJava(environmentName, operationsArr) {
 
 }
 
+function convertAgentsToAslFile(agentName, planName){
+
+  let code = `// Agent ${agentName}
+  /* Initial beliefs */
+  available().
+  
+  /* Initial rules */
+  
+  /* Initial goals */
+  
+  /* Plans */
+  @${planName}
+  `;
+  return code;
+
+}
+
 function createAndDownloadFiles(filesArray, folderName) {
   // Create a new instance of JSZip
   var JSZip = require("jszip");
@@ -92,7 +109,7 @@ function createAndDownloadFiles(filesArray, folderName) {
 
   // Define an array of file data
 
-
+console.log("fileArray",filesArray);
   // Loop through the array of files
   filesArray.forEach((file) => {
     // Add each file to the ZIP archive
@@ -121,5 +138,5 @@ function createAndDownloadFiles(filesArray, folderName) {
   });
 }
 
-export { convertMasModelToJava, createAndDownloadFiles, convertEnvironmentModelToJava };
+export { convertMasModelToJava, createAndDownloadFiles, convertEnvironmentModelToJava,convertAgentsToAslFile };
 
