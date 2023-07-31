@@ -28,7 +28,7 @@ const File = ({ name, id, node }) => {
   };
   const handleNodeClick = React.useCallback(
     (e) => {
-      // e.stopPropagation();
+      e.stopPropagation();
       console.log("handle node clicl")
       onNodeClick({ node });
     },

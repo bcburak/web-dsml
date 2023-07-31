@@ -1,4 +1,9 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, {
+  useState,
+  useLayoutEffect,
+  useEffect,
+  useCallback,
+} from "react";
 import "./style.css";
 import "reactflow/dist/style.css";
 import { styled, useTheme } from "@mui/material/styles";
@@ -38,6 +43,7 @@ import FlowProvider from "../../store/FlowProvider";
 // } from "react-complex-tree";
 // import { longTree, longTreeTemplate, readTemplate } from "../Tree/data";
 import { useEdgeNames } from "../../store/flow-context";
+import ResizableDrawer from "../Designer/ResizableDrawer";
 
 interface Node {
   type: string;
@@ -232,17 +238,38 @@ const actualTree: ExactTree = {
   },
 };
 
+const defaultDrawerWidth = 256;
+const minDrawerWidth = 50;
+const maxDrawerWidth = 1000;
+
 function Home() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  // const { tabIndex, setTabIndex } = useEdgeNames();
   const [counter, setCounter] = useState(0);
-  // const [focusedItem, setFocusedItem] = useState<TreeItem<string>>();
   const [treeState, setTreeState] = useState(initState);
 
   const [selectedTab, setSelectedTab] = useState("Main");
 
   const [tabs, setTabs] = useState([]);
+
+  const [drawerWidth, setDrawerWidth] = React.useState(defaultDrawerWidth);
+
+  const handleMouseDown = (e: any) => {
+    document.addEventListener("mouseup", handleMouseUp, true);
+    document.addEventListener("mousemove", handleMouseMove, true);
+  };
+
+  const handleMouseUp = () => {
+    document.removeEventListener("mouseup", handleMouseUp, true);
+    document.removeEventListener("mousemove", handleMouseMove, true);
+  };
+
+  const handleMouseMove = useCallback((e: any) => {
+    const newWidth = e.clientX - document.body.offsetLeft;
+    if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) {
+      setDrawerWidth(newWidth);
+    }
+  }, []);
 
   const [treeItems, setTreeItems] = useState<ExactTree>();
 
@@ -250,13 +277,6 @@ function Home() {
     setSelectedTab(newValue);
     console.log("setSelectedTab:", newValue);
   };
-
-  // const handleTabOptions = (value: any) => {
-  //   setSelectedTab(value);
-  //   // setTabIndex(tabIndex + 1);
-  //   // setTabIndex(5);
-  //   // console.log("tabindex:", tabIndex);
-  // };
 
   const addTab = (parentNode: string, treeFileName: any, itemIndex: any) => {
     // const value = `Blue Box ${itemIndex}`;
@@ -274,38 +294,6 @@ function Home() {
 
     setSelectedTab(treeFileName);
     // handleTabOptions(treeFileName);
-  };
-
-  const addNewTreeNode = (nodeName: any) => {
-    // let treeNodes = longTree.items;
-    nodeName = "Environment";
-
-    const treeNode = {
-      index: nodeName,
-      canMove: true,
-      isFolder: false,
-      data: nodeName,
-      canRename: true,
-      countIndex: 2,
-    };
-
-    actualTree[nodeName] = treeNode;
-    // const jsonArray = JSON.stringify([actualTree]);
-
-    setTreeItems(actualTree);
-    console.log("setted", treeItems);
-  };
-
-  const addFileNode = () => {
-    const newNode = { name: "new node", checked: 0, isFolder: false };
-    console.log("newNode", newNode);
-
-    // get the last children node
-    const lastNode = treeState.children[treeState.children.length - 1];
-
-    // add the new node to the last node's children array
-    lastNode.children.push(newNode);
-    setTreeState(treeState);
   };
 
   const handleTabClose = (event: any, value: any) => {
@@ -397,48 +385,8 @@ function Home() {
   }, [counter, tabs, selectedTab, treeState]);
 
   useEffect(() => {
-    // setTreeItems(actualTree);
     setTreeState(initState);
   }, []);
-
-  // const onTreeItemDoubleClick = async (item: any) => {
-  //   // event.preventDefault();
-  //   console.log("ontree:");
-  //   // if (event) {
-  //   //   event.preventDefault();
-  //   setCounter((counter) => counter + 1);
-  //   // console.log("focused", counter);
-  //   // }
-  //   if (item.isFolder === false) {
-  //     // setTabIndex(tabIndex + 1);
-  //     // console.log("tabindex:", tabIndex);
-  //     addTab(item.data, counter);
-  //   }
-  // };
-
-  // const onNameClick = ({ defaultOnClick, nodeData }: any) => {
-  //   defaultOnClick();
-  //   console.log("nodeData", nodeData);
-  //   //   event.preventDefault();
-  //   setCounter((counter) => counter + 1);
-  //   // console.log("focused", counter);
-  //   // }
-  //   if (nodeData.isFolder === false) {
-  //     // setTabIndex(tabIndex + 1);
-  //     // console.log("tabindex:", tabIndex);
-  //     addTab(nodeData.name, counter);
-  //   }
-
-  //   // const {
-  //   //   // internal data
-  //   //   path,
-  //   //   name,
-  //   //   checked,
-  //   //   isOpen,
-  //   //   // custom data
-  //   //   url,
-  //   // } = nodeData;
-  // };
 
   return (
     <FlowProvider>
@@ -474,9 +422,11 @@ function Home() {
         <Drawer
           sx={{
             width: drawerWidth,
+            minWidth: defaultDrawerWidth,
             flexShrink: 0,
             "& .MuiDrawer-paper": {
               width: drawerWidth,
+              minWidth: defaultDrawerWidth,
               boxSizing: "border-box",
             },
           }}
@@ -484,6 +434,23 @@ function Home() {
           anchor="left"
           open={open}
         >
+          <div
+            onMouseDown={(e) => handleMouseDown(e)}
+            style={{
+              width: "5px",
+              cursor: "ew-resize",
+              padding: "4px 0 0",
+              borderTop: "1px solid #ddd",
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 100,
+              backgroundColor: "#f4f7f9",
+            }}
+          />
+          <div />
+          <div onMouseDown={(e) => handleMouseDown(e)} />
           <DrawerHeader>
             <Typography
               sx={{
@@ -491,6 +458,7 @@ function Home() {
                   //MuiTypography-root
                   margin: "auto",
                   boxSizing: "border-box",
+                  resize: "horizontal",
                 },
               }}
               variant="h6"
@@ -508,56 +476,6 @@ function Home() {
           </DrawerHeader>
 
           <Divider />
-          {/* <Button onClick={() => addFileNode()}></Button> */}
-
-          {/* <UncontrolledTreeEnvironment<string>
-            canDragAndDrop
-            canDropOnFolder
-            canReorderItems
-            dataProvider={
-              new StaticTreeDataProvider(
-                treeItems as ExactTree,
-                (item, data) => ({
-                  ...item,
-                  data,
-                })
-              )
-            }
-            getItemTitle={(item) => item.data}
-            onFocusItem={(item) => setFocusedItem(item)}
-            canRename={true}
-            defaultInteractionMode={{
-              mode: "custom",
-              createInteractiveElementProps: (
-                item,
-                treeId,
-                actions,
-                renderFlags
-              ) => ({
-                onDoubleClick: (e) => {
-                  e.preventDefault();
-                  onTreeItemDoubleClick(e, item);
-                },
-                onFocus: () => {
-                  // console.log("focuus", actions.focusItem());
-                },
-
-                tabIndex: !renderFlags.isRenaming
-                  ? renderFlags.isFocused
-                    ? 0
-                    : -1
-                  : undefined,
-              }),
-            }}
-            viewState={{
-              "tree-1": {
-                expandedItems: [],
-              },
-            }}
-            {...bpRenderers}
-          >
-            <Tree treeId="tree-1" rootItem="root" treeLabel="Projects tree" />
-          </UncontrolledTreeEnvironment> */}
 
           <Tree
             children={[]}
@@ -565,8 +483,8 @@ function Home() {
             onUpdate={handleUpdate}
             onNodeClick={handleClick}
           />
-          {/* {tabIndex} */}
         </Drawer>
+
         <Main open={open}>
           <DrawerHeader />
           <TabContext value={selectedTab}>
@@ -600,50 +518,13 @@ function Home() {
               </TabPanel>
             ))}
           </TabContext>
-
-          {/* <TabContext value={selectedTab}>
-            <TabList aria-label="lab API tabs example">
-              {tabs.map((tab) => (
-                <Tab
-                  icon={
-                    <CloseIcon onClick={(e) => handleTabClose(e, tab.value)} />
-                  }
-                  iconPosition="end"
-                  key={tab.value}
-                  tabIndex={tab.index}
-                  label={tab.value}
-                  value={tab.value}
-                  onClick={() => {
-                    setSelectedTab(tab.value);
-                    console.log("on tab click", tab.value);
-                  }}
-                />
-              ))}
-            </TabList>
-
-            {tabs.map((panel) => (
-              <TabPanel
-                key={panel.value}
-                value={panel.value}
-                sx={{
-                  "&.MuiTabPanel-root": {
-                    width: "100%",
-                    height: "100%",
-                    padding: "0px",
-                  },
-                }}
-              >
-                {panel.child()}
-              </TabPanel>
-            ))}
-          </TabContext> */}
         </Main>
         <Drawer
           sx={{
-            width: drawerWidth,
+            width: defaultDrawerWidth,
             flexShrink: 0,
             "& .MuiDrawer-paper": {
-              width: drawerWidth,
+              width: defaultDrawerWidth,
               // backgroundColor: "red",
               boxSizing: "border-box",
             },

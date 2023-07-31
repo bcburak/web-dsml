@@ -2,22 +2,14 @@ import { useState, useCallback, useRef, useEffect } from "react";
 
 import ReactFlow, {
   addEdge,
-  FitViewOptions,
-  applyNodeChanges,
-  applyEdgeChanges,
   Node,
   Edge,
-  NodeChange,
-  EdgeChange,
-  Connection,
   Controls,
   useNodesState,
   useEdgesState,
   MarkerType,
   updateEdge,
-  Viewport,
   Background,
-  BackgroundVariant,
   ReactFlowProvider,
   useReactFlow,
 } from "reactflow";
@@ -25,7 +17,13 @@ import "reactflow/dist/style.css";
 import "../Home/style.css";
 import CustomEdge from "./CustomEdge";
 import { useEdgeNames } from "../../store/flow-context";
+import ShapeNode from "./ShapeNode";
+import CustomNode from "./CustomNode";
 
+// const nodeTypes = {
+//   shape: ShapeNode,
+// };
+const nodeTypes = { customNode: CustomNode };
 const initialNodes = [
   {
     id: "edges-1",
@@ -45,11 +43,17 @@ const initialEdges = [
   },
 ];
 
+const defaultEdgeOptions = {
+  type: "smoothstep",
+  markerEnd: { type: MarkerType.ArrowClosed },
+  style: { strokeWidth: 2 },
+};
+
 interface FileState {
   [key: string]: object;
 }
 
-let id = 0;
+let id = Math.random();
 const getId = () => `dndnode_${id++}`;
 
 const FlowLayout = ({ fileName }: { fileName: any }) => {
@@ -139,6 +143,7 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
 
       const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect();
       const type = event.dataTransfer.getData("application/reactflow");
+      console.log("event", JSON.parse(type));
       console.log("type", JSON.parse(type).name);
       // check if the dropped element is valid
       if (typeof type === "undefined" || !type) {
@@ -152,9 +157,22 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
       });
       const newNode = {
         id: getId(),
-        type,
+        type: "customNode",
         position,
-        data: { label: `${JSON.parse(type).name} node` },
+        data: {
+          label: `${JSON.parse(type).name} node`,
+          name: `${JSON.parse(type).name}`,
+        },
+
+        // type: "shape",
+        // position,
+        // data: {
+        //   shape: JSON.parse(type).name,
+        //   width: 70,
+        //   height: 70,
+        //   label: JSON.parse(type).name + "asdas",
+        //   color: "#6ede87",
+        // },
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -220,6 +238,8 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
         onDrop={onDrop}
         onDragOver={onDragOver}
         snapToGrid={true}
+        nodeTypes={nodeTypes}
+        // defaultEdgeOptions={defaultEdgeOptions}
       >
         <div className="save__controls">
           <button onClick={onSave}>save</button>
