@@ -1,5 +1,4 @@
 import { useState, useCallback, useRef, useEffect } from "react";
-
 import ReactFlow, {
   addEdge,
   Node,
@@ -12,6 +11,7 @@ import ReactFlow, {
   Background,
   ReactFlowProvider,
   useReactFlow,
+  useKeyPress,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import "../Home/style.css";
@@ -56,7 +56,12 @@ interface FileState {
 let id = Math.random();
 const getId = () => `dndnode_${id++}`;
 
+const keyMap = {
+  SAVE_LAYOUT: "del",
+};
+
 const FlowLayout = ({ fileName }: { fileName: any }) => {
+  const spacePressed = useKeyPress(["Control+s", "Command+s"]);
   const { edgeName, isDownloadActive, setdownloadClicked } = useEdgeNames();
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -78,6 +83,21 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
       setEdges((els) => updateEdge(oldEdge, newConnection, els)),
     []
   );
+
+  useEffect(() => {
+    console.log("space pressed", spacePressed);
+    if (reactFlowInstance) {
+      localStorage.setItem(
+        fileName,
+        JSON.stringify(reactFlowInstance.toObject())
+      );
+      // alert("file saved");
+      // console.log(
+      //   "reactFlowInstance created:",
+      //   JSON.stringify(reactFlowInstance.toObject())
+      // );
+    }
+  }, [spacePressed, fileName, reactFlowInstance]);
 
   const onEdgeUpdateEnd = useCallback(() => {
     console.log("fileName", fileName);
@@ -221,6 +241,10 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
     console.log("double");
   }, []);
 
+  const handlers = {
+    SAVE_LAYOUT: () => console.log("saved"),
+  };
+
   return (
     <ReactFlowProvider>
       <ReactFlow
@@ -244,6 +268,7 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
         <div className="save__controls">
           <button onClick={onSave}>save</button>
         </div>
+
         <Controls />
         <Background color="#99b3ec" />
       </ReactFlow>
