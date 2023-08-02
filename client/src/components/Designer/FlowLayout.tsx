@@ -175,13 +175,16 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
+      const nodeTypeName = JSON.parse(type).name;
+      let colorCode = colorizedNodes(nodeTypeName);
       const newNode = {
         id: getId(),
         type: "customNode",
         position,
         data: {
-          label: `${JSON.parse(type).name} node`,
-          name: `${JSON.parse(type).name}`,
+          label: `${nodeTypeName} node`,
+          name: `${nodeTypeName}`,
+          colorCode: colorCode,
         },
 
         // type: "shape",
@@ -200,6 +203,34 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
     [reactFlowInstance, setNodes]
   );
 
+  function colorizedNodes(nodeTypeName: string) {
+    switch (nodeTypeName) {
+      case "agent":
+        return "#33B2FF";
+      case "capability":
+        return "#33FFCE";
+      case "envrionment":
+        return "#FFD433";
+      case "event":
+        return "#FFAC33";
+      case "operation":
+        return "#AA8FC0";
+      case "belief":
+        return "#FF6433";
+      case "plan":
+        return "#C08FAE";
+      case "subCapability":
+        return "#C8C4C6";
+      case "relation":
+        return "#E1EBE7";
+      case "message":
+        return "#55BBFD";
+      case "environment":
+        return "#3D47F0";
+      case "action":
+        return "#FF6433";
+    }
+  }
   const onSave = useCallback(() => {
     if (reactFlowInstance) {
       localStorage.setItem(

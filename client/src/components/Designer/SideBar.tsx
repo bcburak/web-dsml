@@ -473,7 +473,7 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "relationNode")
+                onDragStart(event, "default", "relation")
               }
               draggable
             >
@@ -510,7 +510,7 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "relationNode")
+                onDragStart(event, "default", "relation")
               }
               draggable
             >

@@ -7,9 +7,9 @@ function TextUpdaterNode({ data, isConnectable }: NodeProps) {
   const onChange = useCallback((evt: any) => {
     console.log(evt.target.value);
   }, []);
-
+  console.log("background", data.colorCode);
   return (
-    <div className="text-updater-node" style={{ background: "#7778" }}>
+    <div className="text-updater-node" style={{ background: data?.colorCode }}>
       <Handle
         type="target"
         position={Position.Top}
