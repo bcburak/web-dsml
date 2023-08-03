@@ -30,7 +30,6 @@ import DisplaySettingsOutlinedIcon from "@mui/icons-material/DisplaySettingsOutl
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
 import CloudDownloadIcon from "@mui/icons-material/CloudDownload";
 import { EdgeName, useEdgeNames } from "../../store/flow-context";
-import httpCommon from "../../utils/http-common";
 import {
   convertAgentsToAslFile,
   convertEnvironmentModelToJava,

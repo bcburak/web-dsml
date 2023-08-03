@@ -85,7 +85,6 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
   );
 
   useEffect(() => {
-    console.log("space pressed", spacePressed);
     if (reactFlowInstance) {
       localStorage.setItem(
         fileName,
@@ -106,8 +105,10 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
   }, [fileState]);
 
   const onRestore = useCallback(() => {
+    //TODO: Get flow layout here
     const restoreFlow = async () => {
       const flow = JSON.parse(localStorage.getItem(fileName));
+      console.log("getting flow", flow);
 
       if (flow) {
         const { x = 0, y = 0, zoom = 1 } = flow.viewport;

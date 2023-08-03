@@ -281,6 +281,7 @@ function Home() {
   const addTab = (parentNode: string, treeFileName: any, itemIndex: any) => {
     // const value = `Blue Box ${itemIndex}`;
     console.log("treeFileName:", treeFileName);
+    console.log("parentNode:", parentNode);
     console.log("itemIndex:", itemIndex);
     const newTab = {
       value: treeFileName,
@@ -319,6 +320,41 @@ function Home() {
 
   const handleUpdate = (state: any) => {
     console.log("update", state);
+    var baseUri = process.env.BASE_URI;
+    let createTreeUrl = "http://localhost:8000/api/sessions/createTree";
+
+    let treeData = JSON.stringify(state, function (key, value) {
+      if (key === "parentNode" || key === "id") {
+        return null;
+      }
+      return value;
+    });
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ treeValue: treeData }),
+    };
+    fetch(createTreeUrl, requestOptions)
+      .then(async (response) => {
+        const isJson = response.headers
+          .get("content-type")
+          ?.includes("application/json");
+        const data = isJson && (await response.json());
+
+        // check for error response
+        if (!response.ok) {
+          // get error message from body or default to response status
+          const error = (data && data.message) || response.status;
+          return Promise.reject(error);
+        }
+
+        // this.setState({ postId: data.id })
+      })
+      .catch((error) => {
+        // this.setState({ errorMessage: error.toString() });
+        console.error("There was an error!", error);
+      });
+    //TODO:Set tree item in mongo
     localStorage.setItem(
       "tree",
       JSON.stringify(state, function (key, value) {
@@ -367,8 +403,44 @@ function Home() {
   };
 
   useLayoutEffect(() => {
+    let getTreeUrl = "http://localhost:8000/api/sessions/getTreeByUserId";
+
+    fetch(getTreeUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("treedat", JSON.parse(data[0].treeValue)[0]);
+        setData(JSON.parse(data[0].treeValue)); // Assuming the API returns an array of treeValue fields
+      })
+      .catch((error) => {
+        console.error("Error fetching tree data:", error);
+      });
+    // fetch(getTreeUrl)
+    //   .then((response) => response.json())
+    //   .then((data) => console.log("treed:", data));
+    // fetch(getTreeUrl)
+    //   .then(async (response) => {
+    //     const data = await response.json();
+    //     console.log("treedat", JSON.parse(data[0].treeValue));
+
+    //     // check for error response
+    //     if (!response.ok) {
+    //       // get error message from body or default to response statusText
+    //       // const error = (data && data.message) || response.statusText;
+    //       // return Promise.reject(error);
+    //     }
+    //     let savedStructure = JSON.parse(data as any);
+    //     setData(savedStructure);
+    //   })
+    //   .catch((error) => {
+    //     console.error("There was an error!", error);
+    //   });
     try {
-      let savedStructure = JSON.parse(localStorage.getItem("tree") as any);
+      let savedStructure = JSON.parse(localStorage.getItem("tree") as any); //TODO: Get tree items from mongo
       if (savedStructure) {
         setData(savedStructure);
       }
