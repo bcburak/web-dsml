@@ -17,10 +17,10 @@ import bcrypt from "bcryptjs";
 
 // Export the User class to be used as TypeScript type
 export class FlowLayout {
+  @prop({ unique: true, required: true })
+  flowFileName: string;
   @prop()
-  fileName: string;
-  @prop()
-  fileValue: object;
+  flowFileData: object;
   @prop({ unique: true, required: true })
   userId: string;
 }

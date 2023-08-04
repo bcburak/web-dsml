@@ -25,14 +25,16 @@ const theme = createTheme();
 
 function Login() {
   const location = useLocation();
-  const from = ((location.state as any)?.from.pathname as string) || "/home";
+  const from = ((location.state as any)?.from.pathname as string) || "/web";
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    console.log("handle");
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get("email"),
       password: data.get("password"),
+      userId: data.get("_id"),
     });
   };
 

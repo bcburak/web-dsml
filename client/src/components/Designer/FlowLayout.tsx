@@ -85,55 +85,108 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
   );
 
   useEffect(() => {
-    if (reactFlowInstance) {
-      localStorage.setItem(
-        fileName,
-        JSON.stringify(reactFlowInstance.toObject())
-      );
-      // alert("file saved");
-      // console.log(
-      //   "reactFlowInstance created:",
-      //   JSON.stringify(reactFlowInstance.toObject())
-      // );
+    console.log("spacePressed");
+
+    if (spacePressed) {
+      console.log("triggering");
+      let createTreeUrl = "http://localhost:8000/api/sessions/createFlowData";
+      if (reactFlowInstance) {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            flowFileData: reactFlowInstance,
+            flowFileName: fileName,
+          }),
+        };
+        fetch(createTreeUrl, requestOptions)
+          .then(async (response) => {
+            const isJson = response.headers
+              .get("content-type")
+              ?.includes("application/json");
+            const data = isJson && (await response.json());
+
+            // check for error response
+            if (!response.ok) {
+              // get error message from body or default to response status
+              const error = (data && data.message) || response.status;
+              return Promise.reject(error);
+            }
+
+            // this.setState({ postId: data.id })
+          })
+          .catch((error) => {
+            // this.setState({ errorMessage: error.toString() });
+            console.error("There was an error!", error);
+          });
+        // localStorage.setItem(
+        //   fileName,
+        //   JSON.stringify(reactFlowInstance.toObject())
+        // );
+        // alert("file saved");
+        // console.log(
+        //   "reactFlowInstance created:",
+        //   JSON.stringify(reactFlowInstance.toObject())
+        // );
+      }
     }
   }, [spacePressed, fileName, reactFlowInstance]);
 
-  const onEdgeUpdateEnd = useCallback(() => {
-    console.log("fileName", fileName);
-    const flow = reactFlowInstance.toObject();
-    updateFileState(fileName, flow);
-  }, [fileState]);
+  // const onEdgeUpdateEnd = useCallback(() => {
+  //   console.log("fileName", fileName);
+  //   const flow = reactFlowInstance.toObject();
+  //   updateFileState(fileName, flow);
+  // }, [fileState]);
 
   const onRestore = useCallback(() => {
     //TODO: Get flow layout here
     const restoreFlow = async () => {
-      const flow = JSON.parse(localStorage.getItem(fileName));
-      console.log("getting flow", flow);
+      // const flow = JSON.parse(localStorage.getItem(fileName));
+      // console.log("getting flow", flow);
+      let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByUserId?flowFileName=${fileName}`;
+      fetch(getFlowUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          let flowData = JSON.parse(data[0].flowFileData);
+          console.log("flowData", flowData);
+          const { x = 0, y = 0, zoom = 1 } = flowData.viewport;
+          setNodes(flowData.nodes || []);
+          setEdges(flowData.edges || []);
+          setViewport({ x, y, zoom });
+        })
+        .catch((error) => {
+          console.error("Error fetching tree data:", error);
+        });
 
-      if (flow) {
-        const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-        setNodes(flow.nodes || []);
-        setEdges(flow.edges || []);
-        setViewport({ x, y, zoom });
-      }
+      // if (flow) {
+      //   const { x = 0, y = 0, zoom = 1 } = flow.viewport;
+      //   setNodes(flow.nodes || []);
+      //   setEdges(flow.edges || []);
+      //   setViewport({ x, y, zoom });
+      // }
     };
 
     restoreFlow();
   }, [setEdges, setNodes]);
 
-  useEffect(() => {
-    // Update the document title using the browser API
+  // useEffect(() => {
+  //   // Update the document title using the browser API
 
-    onRestore();
-    // console.log("reactFlowInstance", reactFlowInstance);
-    // if (reactFlowInstance) {
-    //   console.log("fileName", fileName);
-    //   // const flow = reactFlowInstance.toObject();
-    //   // updateFileState(fileName, flow);
-    //   // localStorage.setItem(fileName, JSON.stringify(flow));
-    //   // setdownloadClicked(false);
-    // }
-  }, [isDownloadActive, reactFlowInstance, fileName, onRestore]);
+  //   onRestore();
+  //   // console.log("reactFlowInstance", reactFlowInstance);
+  //   // if (reactFlowInstance) {
+  //   //   console.log("fileName", fileName);
+  //   //   // const flow = reactFlowInstance.toObject();
+  //   //   // updateFileState(fileName, flow);
+  //   //   // localStorage.setItem(fileName, JSON.stringify(flow));
+  //   //   // setdownloadClicked(false);
+  //   // }
+  // }, [isDownloadActive, reactFlowInstance, fileName, onRestore]);
 
   const onConnect = useCallback(
     (params: any) =>
@@ -233,6 +286,40 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
     }
   }
   const onSave = useCallback(() => {
+    let createTreeUrl = "http://localhost:8000/api/sessions/createFlowData";
+    if (reactFlowInstance) {
+      let flowInstanceData = JSON.stringify(reactFlowInstance.toObject());
+      console.log("flow instance", flowInstanceData);
+
+      const requestOptions = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          flowFileData: flowInstanceData,
+          flowFileName: fileName,
+        }),
+      };
+      fetch(createTreeUrl, requestOptions)
+        .then(async (response) => {
+          const isJson = response.headers
+            .get("content-type")
+            ?.includes("application/json");
+          const data = isJson && (await response.json());
+
+          // check for error response
+          if (!response.ok) {
+            // get error message from body or default to response status
+            const error = (data && data.message) || response.status;
+            return Promise.reject(error);
+          }
+
+          // this.setState({ postId: data.id })
+        })
+        .catch((error) => {
+          // this.setState({ errorMessage: error.toString() });
+          console.error("There was an error!", error);
+        });
+    }
     if (reactFlowInstance) {
       localStorage.setItem(
         fileName,
@@ -299,6 +386,7 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
       >
         <div className="save__controls">
           <button onClick={onSave}>save</button>
+          <button onClick={onRestore}>restore</button>
         </div>
 
         <Controls />

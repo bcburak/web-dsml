@@ -7,6 +7,7 @@ import {
   findTreeByUserId,
 } from "../services/tree.service";
 
+const userId = "640f65f14637a185a8ddcadc";
 export const createUpdateTree = async (
   req: Request,
   res: Response,
@@ -14,7 +15,6 @@ export const createUpdateTree = async (
 ) => {
   try {
     var treeValue = req.body.treeValue;
-    let userId = "640f65f14637a185a8ddcadc";
 
     const tree = await findAndUpdateTree(
       { userId },
@@ -40,8 +40,6 @@ export const getTreeByUserId = async (
   next: NextFunction
 ) => {
   try {
-    let userId = "640f65f14637a185a8ddcadc";
-
     const tree = await findTreeByUserId(userId);
 
     console.log("tree by user id info: ", tree);
