@@ -11,6 +11,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import AccountCircle from "@mui/icons-material/AccountCircle";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -30,7 +31,7 @@ import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import { TabList, TabContext, TabPanel } from "@mui/lab";
 
 import CloseIcon from "@mui/icons-material/Close";
-import { Button, Tab } from "@mui/material";
+import { Button, Menu, MenuItem, Tab } from "@mui/material";
 import FlowProvider from "../../store/FlowProvider";
 // import { renderers as bpRenderers } from "react-complex-tree-blueprintjs-renderers";
 // import {
@@ -262,6 +263,21 @@ function Home(user: any) {
 
   const [drawerWidth, setDrawerWidth] = React.useState(defaultDrawerWidth);
 
+  const [auth, setAuth] = React.useState(true);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleMenuChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAuth(event.target.checked);
+  };
+
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const handleMouseDown = (e: any) => {
     document.addEventListener("mouseup", handleMouseUp, true);
     document.addEventListener("mousemove", handleMouseMove, true);
@@ -487,20 +503,45 @@ function Home(user: any) {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              sx={{
-                "& 	.MuiTypography-root": {
-                  //MuiTypography-root
-                  margin: "auto",
-                  boxSizing: "border-box",
-                },
-              }}
-              variant="h6"
-              noWrap
-              component="div"
-            >
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Web Flow DSML
             </Typography>
+
+            <div
+              style={{
+                marginInlineEnd: "230px",
+                padding: "0.5rem 1rem",
+                cursor: "pointer",
+              }}
+            >
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "right",
+                }}
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+              >
+                <MenuItem onClick={logout}>Logout</MenuItem>
+              </Menu>
+            </div>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -629,20 +670,6 @@ function Home(user: any) {
             >
               Designer Tool Box
             </Typography>
-            <div>
-              <button
-                onClick={logout}
-                style={{
-                  color: "red",
-                  border: "1px solid gray",
-                  backgroundColor: "white",
-                  padding: "0.5rem 1rem",
-                  cursor: "pointer",
-                }}
-              >
-                Logout
-              </button>
-            </div>
           </Toolbar>
           <Divider />
 
