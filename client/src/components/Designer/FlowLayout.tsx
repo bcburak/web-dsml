@@ -15,9 +15,7 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import "../Home/style.css";
-import CustomEdge from "./CustomEdge";
 import { useEdgeNames } from "../../store/flow-context";
-import ShapeNode from "./ShapeNode";
 import CustomNode from "./CustomNode";
 
 // const nodeTypes = {
@@ -182,19 +180,10 @@ const FlowLayout = (props: FlowProps) => {
     restoreFlow();
   }, [setEdges, setNodes]);
 
-  // useEffect(() => {
-  //   // Update the document title using the browser API
-
-  //   onRestore();
-  //   // console.log("reactFlowInstance", reactFlowInstance);
-  //   // if (reactFlowInstance) {
-  //   //   console.log("fileName", fileName);
-  //   //   // const flow = reactFlowInstance.toObject();
-  //   //   // updateFileState(fileName, flow);
-  //   //   // localStorage.setItem(fileName, JSON.stringify(flow));
-  //   //   // setdownloadClicked(false);
-  //   // }
-  // }, [isDownloadActive, reactFlowInstance, fileName, onRestore]);
+  useEffect(() => {
+    // Update the document title using the browser API
+    onRestore();
+  }, [props.fileName, props.userId]);
 
   const onConnect = useCallback(
     (params: any) =>
@@ -395,7 +384,7 @@ const FlowLayout = (props: FlowProps) => {
       >
         <div className="save__controls">
           <button onClick={onSave}>save</button>
-          <button onClick={onRestore}>restore</button>
+          {/* <button onClick={onRestore}>restore</button> */}
         </div>
 
         <Controls />
