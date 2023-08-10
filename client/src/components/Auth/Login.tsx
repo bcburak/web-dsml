@@ -5,6 +5,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import SendIcon from "@mui/icons-material/Send";
 import Anchor from "@mui/icons-material/Anchor";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { GoogleLogin } from "react-google-login";
 import { faInfo } from "@fortawesome/free-solid-svg-icons/faInfo";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -20,22 +21,44 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getGoogleUrl } from "../../utils/getGoogleUrl";
 import { useLocation } from "react-router-dom";
 import { ReactComponent as GoogleLogo } from "../../assets/google.svg";
+import useFetch from "../../hooks/useFetch";
 
 const theme = createTheme();
 
 function Login() {
   const location = useLocation();
-  const from = ((location.state as any)?.from.pathname as string) || "/web";
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    console.log("handle");
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-      userId: data.get("_id"),
-    });
+  const { handleGoogle, loading, error } = useFetch(
+    "http://localhost:8000/api/sessions/login"
+  );
+
+  React.useEffect(() => {
+    /* global google */
+    if ((window as any).google) {
+      (window as any).google.accounts.id.initialize({
+        client_id:
+          "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com",
+        callback: handleGoogle,
+      });
+
+      (window as any).google.accounts.id.renderButton(
+        document.getElementById("loginDiv"),
+        {
+          scope: "profile email",
+          width: 240,
+          height: 50,
+          longtitle: true,
+          theme: "dark",
+        }
+      );
+
+      // google.accounts.id.prompt()
+    }
+  }, [handleGoogle]);
+
+  const handleLogin = async (googleData: any) => {
+    console.log("googleData", googleData);
+    // store returned user somehow
   };
 
   return (
@@ -56,12 +79,7 @@ function Login() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
+          <Box component="form" noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -120,27 +138,17 @@ function Login() {
               borderRadius: 2,
             }}
           >
-            <MuiLink
-              href={getGoogleUrl(from)}
-              sx={{
-                borderRadius: 1,
-                py: "0.6rem",
-                columnGap: "1rem",
-                textDecoration: "none",
-                cursor: "pointer",
-                fontWeight: 500,
-                "&:hover": {
-                  backgroundColor: "#968df1",
-                  boxShadow: "0 1px 13px 0 rgb(0 0 0 / 15%)",
-                },
+            <main
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
               }}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
             >
-              <GoogleLogo style={{ height: "2rem" }} />
-              Auth with Google
-            </MuiLink>
+              {error && <p style={{ color: "red" }}>{error}</p>}
+              {loading ? <div>Loading....</div> : <div id="loginDiv"></div>}
+            </main>
           </Box>
         </Box>
       </Container>

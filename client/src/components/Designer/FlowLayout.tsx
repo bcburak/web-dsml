@@ -53,6 +53,11 @@ interface FileState {
   [key: string]: object;
 }
 
+interface FlowProps {
+  fileName: string;
+  userId: any;
+}
+
 let id = Math.random();
 const getId = () => `dndnode_${id++}`;
 
@@ -60,7 +65,7 @@ const keyMap = {
   SAVE_LAYOUT: "del",
 };
 
-const FlowLayout = ({ fileName }: { fileName: any }) => {
+const FlowLayout = (props: FlowProps) => {
   const spacePressed = useKeyPress(["Control+s", "Command+s"]);
   const { edgeName, isDownloadActive, setdownloadClicked } = useEdgeNames();
   const reactFlowWrapper = useRef(null);
@@ -86,20 +91,21 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
 
   useEffect(() => {
     console.log("spacePressed");
-
+    var file = props.fileName;
     if (spacePressed) {
       console.log("triggering");
-      let createTreeUrl = "http://localhost:8000/api/sessions/createFlowData";
+      let createFlowDataUrl =
+        "http://localhost:8000/api/sessions/createFlowData";
       if (reactFlowInstance) {
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             flowFileData: reactFlowInstance,
-            flowFileName: fileName,
+            flowFileName: file,
           }),
         };
-        fetch(createTreeUrl, requestOptions)
+        fetch(createFlowDataUrl, requestOptions)
           .then(async (response) => {
             const isJson = response.headers
               .get("content-type")
@@ -130,7 +136,7 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
         // );
       }
     }
-  }, [spacePressed, fileName, reactFlowInstance]);
+  }, [spacePressed, props.fileName, reactFlowInstance]);
 
   // const onEdgeUpdateEnd = useCallback(() => {
   //   console.log("fileName", fileName);
@@ -143,7 +149,9 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
     const restoreFlow = async () => {
       // const flow = JSON.parse(localStorage.getItem(fileName));
       // console.log("getting flow", flow);
-      let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByUserId?flowFileName=${fileName}`;
+      console.log("userId", props.userId);
+      console.log("fileName", props.fileName);
+      let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByUserId?flowFileName=${props.fileName}&userId=${props.userId}`;
       fetch(getFlowUrl)
         .then((response) => {
           if (!response.ok) {
@@ -286,7 +294,7 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
     }
   }
   const onSave = useCallback(() => {
-    let createTreeUrl = "http://localhost:8000/api/sessions/createFlowData";
+    let createFlowDataUrl = "http://localhost:8000/api/sessions/createFlowData";
     if (reactFlowInstance) {
       let flowInstanceData = JSON.stringify(reactFlowInstance.toObject());
       console.log("flow instance", flowInstanceData);
@@ -296,10 +304,11 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           flowFileData: flowInstanceData,
-          flowFileName: fileName,
+          flowFileName: props.fileName,
+          userId: props.userId,
         }),
       };
-      fetch(createTreeUrl, requestOptions)
+      fetch(createFlowDataUrl, requestOptions)
         .then(async (response) => {
           const isJson = response.headers
             .get("content-type")
@@ -322,7 +331,7 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
     }
     if (reactFlowInstance) {
       localStorage.setItem(
-        fileName,
+        props.fileName,
         JSON.stringify(reactFlowInstance.toObject())
       );
       alert("file saved");
@@ -331,7 +340,7 @@ const FlowLayout = ({ fileName }: { fileName: any }) => {
       //   JSON.stringify(reactFlowInstance.toObject())
       // );
     }
-  }, [reactFlowInstance, fileName]);
+  }, [reactFlowInstance, props.fileName]);
 
   useEffect(() => {
     setNodes((nds) =>

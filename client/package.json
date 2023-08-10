@@ -35,6 +35,7 @@
     "react-dom": "^18.2.0",
     "react-dyn-tabs": "^5.0.1",
     "react-folder-tree": "^5.1.1",
+    "react-google-login": "^5.2.2",
     "react-icons": "^4.7.1",
     "react-md": "^5.1.4",
     "react-router-dom": "^6.6.1",

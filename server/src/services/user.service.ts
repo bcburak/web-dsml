@@ -1,16 +1,10 @@
-import { omit } from 'lodash';
-import { FilterQuery, QueryOptions, UpdateQuery } from 'mongoose';
-import config from 'config';
-import userModel, { User } from '../models/user.model';
-import userProfileModel, { UserProfile } from '../models/userprofile.model';
-import { excludedFields } from '../controllers/auth.controller';
-import { signJwt } from '../utils/jwt';
-import redisClient from '../utils/connectRedis';
-import { DocumentType } from '@typegoose/typegoose';
+import { omit } from "lodash";
+import { FilterQuery, QueryOptions, UpdateQuery } from "mongoose";
+import userModel, { User } from "../models/user.model";
+import userProfileModel, { UserProfile } from "../models/userprofile.model";
+import { excludedFields } from "../controllers/auth.controller";
 
-import jwt, { SignOptions } from 'jsonwebtoken';
-
-
+import jwt, { SignOptions } from "jsonwebtoken";
 
 // CreateUser service
 export const createUser = async (input: Partial<User>) => {
@@ -34,7 +28,7 @@ export const findUser = async (
   query: FilterQuery<User>,
   options: QueryOptions = {}
 ) => {
-  return await userModel.findOne(query, {}, options).select('+password');
+  return await userModel.findOne(query, {}, options).select("+password");
 };
 
 export const findAndUpdateUser = async (
@@ -44,7 +38,6 @@ export const findAndUpdateUser = async (
 ) => {
   return await userModel.findOneAndUpdate(query, update, options);
 };
-
 
 // CreateUser service
 export const createUserProfile = async (input: Partial<UserProfile>) => {
@@ -79,23 +72,19 @@ export const findUserProfileById = async (id: string) => {
 //   return { access_token, refresh_token };
 // };
 
-
-export const signToken = async (email:any) => {
-
-
+export const signToken = async (email: any) => {
   const access_token = jwt.sign({ email }, "ACCESS_TOKEN_PRIVATE_KEY", {
     expiresIn: "1d",
   });
 
-  const refresh_token = jwt.sign({ email }, 'REFRESH_TOKEN_PRIVATE_KEY', {
+  const refresh_token = jwt.sign({ email }, "REFRESH_TOKEN_PRIVATE_KEY", {
     expiresIn: "1d",
-});
+  });
   // Sign the access token
   // const access_token = signJwt({ sub: userid }, 'accessTokenPrivateKey', {
   //   expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`,
   // });
 
-  
   // Sign the refresh token
   // const refresh_token = signJwt({ sub: userid }, 'refreshTokenPrivateKey', {
   //   expiresIn: `${config.get<number>('refreshTokenExpiresIn')}m`,

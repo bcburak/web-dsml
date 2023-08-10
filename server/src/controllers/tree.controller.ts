@@ -7,7 +7,6 @@ import {
   findTreeByUserId,
 } from "../services/tree.service";
 
-const userId = "640f65f14637a185a8ddcadc";
 export const createUpdateTree = async (
   req: Request,
   res: Response,
@@ -15,6 +14,7 @@ export const createUpdateTree = async (
 ) => {
   try {
     var treeValue = req.body.treeValue;
+    var userId = req.body.userId;
 
     const tree = await findAndUpdateTree(
       { userId },
@@ -28,7 +28,7 @@ export const createUpdateTree = async (
         lean: true,
       }
     );
-    console.log("tree info: ", tree);
+    // console.log("tree info: ", tree);
     return res;
   } catch (err: any) {
     console.log("Failed to post tree data", err);
@@ -40,6 +40,7 @@ export const getTreeByUserId = async (
   next: NextFunction
 ) => {
   try {
+    const userId = req.query.userId as string;
     const tree = await findTreeByUserId(userId);
 
     console.log("tree by user id info: ", tree);

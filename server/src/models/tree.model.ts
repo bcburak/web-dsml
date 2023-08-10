@@ -19,7 +19,7 @@ import bcrypt from "bcryptjs";
 export class Tree {
   @prop()
   treeValue: object;
-  @prop({ unique: true, required: true })
+  @prop({ required: true })
   userId: string;
 }
 

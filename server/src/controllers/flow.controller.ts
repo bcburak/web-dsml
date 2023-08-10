@@ -1,17 +1,13 @@
 import { DocumentType } from "@typegoose/typegoose";
 const config = require("config");
 import { CookieOptions, NextFunction, Request, Response } from "express";
-import {
-  createTree,
-  findAndUpdateTree,
-  findTreeByUserId,
-} from "../services/tree.service";
+
 import {
   findAndUpdateFlowData,
   findFlowDataByUserId,
 } from "../services/flow.service";
 
-const userId = "640f65f14637a185a8ddcadc";
+// const userId = "640f65f14637a185a8ddcadc";
 export const createUpdateFlowData = async (
   req: Request,
   res: Response,
@@ -20,8 +16,9 @@ export const createUpdateFlowData = async (
   try {
     var flowFileName = req.body.flowFileName;
     var flowFileData = req.body.flowFileData;
+    var userId = req.body.userId;
     console.log("flowFileName", req.body);
-    console.log("flowFileData", req.body.flowFileName);
+    console.log("flowFileData userId", userId);
     // let userId = "640f65f14637a185a8ddcadc";
 
     const flow = await findAndUpdateFlowData(
@@ -49,8 +46,10 @@ export const getFlowByUserId = async (
   next: NextFunction
 ) => {
   try {
+    // const userId = "640f65f14637a185a8ddcadc";
     const fileName = req.query.flowFileName as string;
-    console.log("fileName", fileName);
+    const userId = req.query.userId as string;
+    console.log("userId getFlowByUserId", userId);
     const flow = await findFlowDataByUserId(userId, fileName);
 
     console.log("flow by user id info: ", flow);

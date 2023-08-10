@@ -1,24 +1,23 @@
 {
   "files": {
-    "main.css": "web/static/css/main.9a785b66.css",
-    "main.js": "web/static/js/main.01a77c38.js",
-    "static/js/787.c4e7f8f9.chunk.js": "web/static/js/787.c4e7f8f9.chunk.js",
-    "static/media/blueprint-icons-20.eot?": "web/static/media/blueprint-icons-20.bffd23e04c9d82b1df2a.eot",
-    "static/media/blueprint-icons-20.ttf?": "web/static/media/blueprint-icons-20.a36deb14ebebc58471c0.ttf",
-    "static/media/blueprint-icons-16.eot?": "web/static/media/blueprint-icons-16.fde8cacb8868288ed9d1.eot",
-    "static/media/blueprint-icons-16.ttf?": "web/static/media/blueprint-icons-16.eb652aad9a929d252b80.ttf",
-    "static/media/blueprint-icons-20.woff?": "web/static/media/blueprint-icons-20.d0a17caff38cb32c7131.woff",
-    "static/media/blueprint-icons-16.woff?": "web/static/media/blueprint-icons-16.869b8978b3bcfa884f8e.woff",
-    "static/media/blueprint-icons-20.woff2?": "web/static/media/blueprint-icons-20.5dc21856f85f91c945a1.woff2",
-    "static/media/blueprint-icons-16.woff2?": "web/static/media/blueprint-icons-16.5a0658c2b025e421ebc2.woff2",
-    "static/media/google.svg": "web/static/media/google.330a2dc7f18d7502647dc5d6f93812ec.svg",
-    "index.html": "web/index.html",
-    "main.9a785b66.css.map": "web/static/css/main.9a785b66.css.map",
-    "main.01a77c38.js.map": "web/static/js/main.01a77c38.js.map",
-    "787.c4e7f8f9.chunk.js.map": "web/static/js/787.c4e7f8f9.chunk.js.map"
+    "main.css": "designer/static/css/main.c8ef2d73.css",
+    "main.js": "designer/static/js/main.75cb1273.js",
+    "static/js/787.c4e7f8f9.chunk.js": "designer/static/js/787.c4e7f8f9.chunk.js",
+    "static/media/blueprint-icons-20.eot?": "designer/static/media/blueprint-icons-20.bffd23e04c9d82b1df2a.eot",
+    "static/media/blueprint-icons-20.ttf?": "designer/static/media/blueprint-icons-20.a36deb14ebebc58471c0.ttf",
+    "static/media/blueprint-icons-16.eot?": "designer/static/media/blueprint-icons-16.fde8cacb8868288ed9d1.eot",
+    "static/media/blueprint-icons-16.ttf?": "designer/static/media/blueprint-icons-16.eb652aad9a929d252b80.ttf",
+    "static/media/blueprint-icons-20.woff?": "designer/static/media/blueprint-icons-20.d0a17caff38cb32c7131.woff",
+    "static/media/blueprint-icons-16.woff?": "designer/static/media/blueprint-icons-16.869b8978b3bcfa884f8e.woff",
+    "static/media/blueprint-icons-20.woff2?": "designer/static/media/blueprint-icons-20.5dc21856f85f91c945a1.woff2",
+    "static/media/blueprint-icons-16.woff2?": "designer/static/media/blueprint-icons-16.5a0658c2b025e421ebc2.woff2",
+    "index.html": "designer/index.html",
+    "main.c8ef2d73.css.map": "designer/static/css/main.c8ef2d73.css.map",
+    "main.75cb1273.js.map": "designer/static/js/main.75cb1273.js.map",
+    "787.c4e7f8f9.chunk.js.map": "designer/static/js/787.c4e7f8f9.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.9a785b66.css",
-    "static/js/main.01a77c38.js"
+    "static/css/main.c8ef2d73.css",
+    "static/js/main.75cb1273.js"
   ]
 }

@@ -192,6 +192,14 @@ interface ExactTree {
   };
 }
 
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  picture: any;
+  email: string;
+  token: string;
+}
 const actualTree: ExactTree = {
   root: {
     index: "root",
@@ -242,7 +250,7 @@ const defaultDrawerWidth = 256;
 const minDrawerWidth = 50;
 const maxDrawerWidth = 1000;
 
-function Home() {
+function Home(user: any) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [counter, setCounter] = useState(0);
@@ -279,14 +287,13 @@ function Home() {
   };
 
   const addTab = (parentNode: string, treeFileName: any, itemIndex: any) => {
-    // const value = `Blue Box ${itemIndex}`;
-    console.log("treeFileName:", treeFileName);
-    console.log("parentNode:", parentNode);
-    console.log("itemIndex:", itemIndex);
     const newTab = {
       value: treeFileName,
       child: () => (
-        <FlowLayout fileName={parentNode.concat("_", treeFileName)} />
+        <FlowLayout
+          fileName={parentNode.concat("_", treeFileName)}
+          userId={user.user.id}
+        />
       ),
       index: itemIndex,
     };
@@ -332,7 +339,7 @@ function Home() {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ treeValue: treeData }),
+      body: JSON.stringify({ treeValue: treeData, userId: user.user.id }),
     };
     fetch(createTreeUrl, requestOptions)
       .then(async (response) => {
@@ -403,7 +410,7 @@ function Home() {
   };
 
   useLayoutEffect(() => {
-    let getTreeUrl = "http://localhost:8000/api/sessions/getTreeByUserId";
+    let getTreeUrl = `http://localhost:8000/api/sessions/getTreeByUserId?userId=${user.user.id}`;
 
     fetch(getTreeUrl)
       .then((response) => {
@@ -413,7 +420,7 @@ function Home() {
         return response.json();
       })
       .then((data) => {
-        console.log("treedat", JSON.parse(data[0].treeValue)[0]);
+        console.log("treedat", JSON.parse(data[0].treeValue));
         setData(JSON.parse(data[0].treeValue)); // Assuming the API returns an array of treeValue fields
       })
       .catch((error) => {
@@ -439,14 +446,14 @@ function Home() {
     //   .catch((error) => {
     //     console.error("There was an error!", error);
     //   });
-    try {
-      let savedStructure = JSON.parse(localStorage.getItem("tree") as any); //TODO: Get tree items from mongo
-      if (savedStructure) {
-        setData(savedStructure);
-      }
-    } catch (err) {
-      console.log(err);
-    }
+    // try {
+    //   let savedStructure = JSON.parse(localStorage.getItem("tree") as any); //TODO: Get tree items from mongo
+    //   if (savedStructure) {
+    //     setData(savedStructure);
+    //   }
+    // } catch (err) {
+    //   console.log(err);
+    // }
   }, []);
 
   useEffect(() => {
@@ -459,6 +466,11 @@ function Home() {
   useEffect(() => {
     setTreeState(initState);
   }, []);
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    window.location.reload();
+  };
 
   return (
     <FlowProvider>
@@ -617,6 +629,20 @@ function Home() {
             >
               Designer Tool Box
             </Typography>
+            <div>
+              <button
+                onClick={logout}
+                style={{
+                  color: "red",
+                  border: "1px solid gray",
+                  backgroundColor: "white",
+                  padding: "0.5rem 1rem",
+                  cursor: "pointer",
+                }}
+              >
+                Logout
+              </button>
+            </div>
           </Toolbar>
           <Divider />
 

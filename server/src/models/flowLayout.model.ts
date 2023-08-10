@@ -21,7 +21,7 @@ export class FlowLayout {
   flowFileName: string;
   @prop()
   flowFileData: object;
-  @prop({ unique: true, required: true })
+  @prop({ required: true })
   userId: string;
 }
 
