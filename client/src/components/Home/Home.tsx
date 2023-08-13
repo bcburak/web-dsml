@@ -673,7 +673,10 @@ function Home(user: any) {
           </Toolbar>
           <Divider />
 
-          <Sidebar selectedPageName={selectedTab.split(".")[1]} />
+          <Sidebar
+            selectedPageName={selectedTab.split(".")[1]}
+            userId={user.user.id}
+          />
         </Drawer>
       </Box>
     </FlowProvider>

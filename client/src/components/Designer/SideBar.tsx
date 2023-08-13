@@ -89,13 +89,24 @@ const Sidebar = (props: any) => {
     event.dataTransfer.effectAllowed = "move";
   };
   function onModelExportClick(): void {
-    // iterate localStorage
-    var keyValuePairs = getAllValuesWithKeyName(selectedProject);
-
-    const files = keyValuePairs.map((pair) => {
-      return { filename: pair.key, content: pair.value };
-    });
-    createAndDownloadFiles(files, "models");
+    let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`;
+    fetch(getFlowUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        const files = data.map((pair: any) => {
+          return { filename: pair.flowFileName, content: pair.flowFileData };
+        });
+        console.log("files-sidebar", files);
+        createAndDownloadFiles(files, "models");
+      })
+      .catch((error) => {
+        console.error("Error fetching tree data:", error);
+      });
   }
 
   const [options, setOptions] = useState([]);

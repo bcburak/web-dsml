@@ -4,6 +4,7 @@ import { CookieOptions, NextFunction, Request, Response } from "express";
 
 import {
   findAndUpdateFlowData,
+  findFlowDataByFileName,
   findFlowDataByUserId,
 } from "../services/flow.service";
 
@@ -56,5 +57,20 @@ export const getFlowByUserId = async (
     res.json(flow);
   } catch (err: any) {
     console.log("Failed to get flow data", err);
+  }
+};
+
+export const getFlowDataByFileName = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const fileName = req.query.flowFileName as string;
+    const userId = req.query.userId as string;
+    const flow = await findFlowDataByFileName(fileName, userId);
+    res.json(flow);
+  } catch (error) {
+    console.log("error while getting flow data");
   }
 };

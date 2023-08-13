@@ -7,12 +7,13 @@ import {
 import {
   createUpdateFlowData,
   getFlowByUserId,
+  getFlowDataByFileName,
 } from "../controllers/flow.controller";
-const jwt = require("jsonwebtoken");
-const { OAuth2Client } = require("google-auth-library");
-const clientId =
-  "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com";
-const client = new OAuth2Client(clientId); //(process.env.CLIENT_ID);
+// const jwt = require("jsonwebtoken");
+// const { OAuth2Client } = require("google-auth-library");
+// const clientId =
+//   "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com";
+// const client = new OAuth2Client(clientId); //(process.env.CLIENT_ID);
 
 const router = express.Router();
 console.log("get auth point");
@@ -22,18 +23,7 @@ router.post("/createTree", createUpdateTree);
 
 router.post("/createFlowData", createUpdateFlowData);
 router.get("/getFlowDataByUserId", getFlowByUserId);
-
-async function verifyGoogleToken(token) {
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: clientId,
-    });
-    return { payload: ticket.getPayload() };
-  } catch (error) {
-    return { error: "Invalid user detected. Please try again" };
-  }
-}
+router.get("/getFlowDataByFileName", getFlowDataByFileName);
 
 router.post("/login", login);
 
