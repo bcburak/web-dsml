@@ -158,6 +158,7 @@ const FlowLayout = (props: FlowProps) => {
           return response.json();
         })
         .then((data) => {
+          console.log("flowData data", data);
           let flowData = JSON.parse(data[0].flowFileData);
           console.log("flowData", flowData);
           const { x = 0, y = 0, zoom = 1 } = flowData.viewport;
@@ -168,13 +169,6 @@ const FlowLayout = (props: FlowProps) => {
         .catch((error) => {
           console.error("Error fetching tree data:", error);
         });
-
-      // if (flow) {
-      //   const { x = 0, y = 0, zoom = 1 } = flow.viewport;
-      //   setNodes(flow.nodes || []);
-      //   setEdges(flow.edges || []);
-      //   setViewport({ x, y, zoom });
-      // }
     };
 
     restoreFlow();
@@ -403,7 +397,3 @@ function FlowWithProvider(props: any) {
 }
 
 export default FlowWithProvider;
-
-// function setViewport(arg0: { x: any; y: any; zoom: any }) {
-//   throw new Error("Function not implemented.");
-// }
