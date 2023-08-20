@@ -18,48 +18,15 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { getGoogleUrl } from "../../utils/getGoogleUrl";
 import { useLocation } from "react-router-dom";
 import { ReactComponent as GoogleLogo } from "../../assets/google.svg";
 import useFetch from "../../hooks/useFetch";
+import GoogleAuth from "./GoogleAuth";
 
 const theme = createTheme();
 
 function Login() {
   const location = useLocation();
-
-  const { handleGoogle, loading, error } = useFetch(
-    "http://localhost:8000/api/sessions/login"
-  );
-
-  React.useEffect(() => {
-    /* global google */
-    if ((window as any).google) {
-      (window as any).google.accounts.id.initialize({
-        client_id:
-          "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com",
-        callback: handleGoogle,
-      });
-
-      (window as any).google.accounts.id.renderButton(
-        document.getElementById("loginDiv"),
-        {
-          scope: "profile email",
-          width: 240,
-          height: 50,
-          longtitle: true,
-          theme: "dark",
-        }
-      );
-
-      // google.accounts.id.prompt()
-    }
-  }, [handleGoogle]);
-
-  const handleLogin = async (googleData: any) => {
-    console.log("googleData", googleData);
-    // store returned user somehow
-  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -100,54 +67,31 @@ function Login() {
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
             <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
               <Grid item>
                 <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
+                  {"You can login with Google Authentication for now."}
                 </Link>
               </Grid>
             </Grid>
           </Box>
 
-          <Typography
-            variant="h6"
-            component="p"
-            sx={{
-              my: "1.5rem",
-              textAlign: "center",
-              color: "white",
-            }}
-          >
-            Log in with another provider:
-          </Typography>
           <Box
             maxWidth="27rem"
             width="100%"
             sx={{
-              backgroundColor: "#e5e7eb",
-              p: { xs: "1rem", sm: "2rem" },
-              borderRadius: 2,
+              p: { xs: "2rem", sm: "2rem" },
+              borderRadius: 25,
             }}
           >
             <main
               style={{
                 display: "flex",
                 justifyContent: "center",
-                flexDirection: "column",
                 alignItems: "center",
               }}
             >
-              {error && <p style={{ color: "red" }}>{error}</p>}
-              {loading ? <div>Loading....</div> : <div id="loginDiv"></div>}
+              <GoogleAuth />
             </main>
           </Box>
         </Box>
