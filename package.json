@@ -5,7 +5,6 @@
     "main": "server/app.js",
     "scripts": {
         "rimraf": "./node_modules/rimraf/bin.js",
-        "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
         "start:prod": "cd server && npm run start",
         "start:dev": "concurrently \"npm run server\" \"npm run client\" -k",
         "client": "cd client && npm run start",
