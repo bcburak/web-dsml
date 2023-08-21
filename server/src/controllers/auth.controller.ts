@@ -15,31 +15,31 @@ const jwt = require("jsonwebtoken");
 export const excludedFields = ["password"];
 
 // Cookie options
-const accessTokenCookieOptions: CookieOptions = {
-  expires: new Date(
-    Date.now() + config.get<number>("accessTokenExpiresIn") * 60 * 1000
-  ),
-  maxAge: config.get<number>("accessTokenExpiresIn") * 60 * 1000,
-  httpOnly: true,
-  sameSite: "lax",
-};
+// const accessTokenCookieOptions: CookieOptions = {
+//   expires: new Date(
+//     Date.now() + config.get<number>("accessTokenExpiresIn") * 60 * 1000
+//   ),
+//   maxAge: config.get<number>("accessTokenExpiresIn") * 60 * 1000,
+//   httpOnly: true,
+//   sameSite: "lax",
+// };
 
-const refreshTokenCookieOptions: CookieOptions = {
-  expires: new Date(
-    Date.now() + config.get<number>("refreshTokenExpiresIn") * 60 * 1000
-  ),
-  maxAge: config.get<number>("refreshTokenExpiresIn") * 60 * 1000,
-  httpOnly: true,
-  sameSite: "lax",
-};
+// const refreshTokenCookieOptions: CookieOptions = {
+//   expires: new Date(
+//     Date.now() + config.get<number>("refreshTokenExpiresIn") * 60 * 1000
+//   ),
+//   maxAge: config.get<number>("refreshTokenExpiresIn") * 60 * 1000,
+//   httpOnly: true,
+//   sameSite: "lax",
+// };
 
 const { OAuth2Client } = require("google-auth-library");
 const clientId =
   "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com";
 const client = new OAuth2Client(clientId); //(process.env.CLIENT_ID);
 // Only set secure to true in production
-if (process.env.NODE_ENV === "production")
-  accessTokenCookieOptions.secure = true;
+// if (process.env.NODE_ENV === "production")
+// accessTokenCookieOptions.secure = true;
 
 // Refresh tokens
 // const logout = (res: Response) => {
@@ -118,7 +118,7 @@ if (process.env.NODE_ENV === "production")
 //   }
 // };
 
-async function verifyGoogleToken(token) {
+async function verifyGoogleToken(token: any) {
   try {
     const ticket = await client.verifyIdToken({
       idToken: token,
