@@ -33,6 +33,9 @@ app.use((0, cors_1.default)({
 // app.use('/api/auth', authRouter);
 // 👇 Register the session router
 app.use("/api/sessions", session_route_1.default);
+app.get("/ping", (_req, res) => {
+    return res.send("pong 🏓");
+});
 // UnKnown Routes
 app.all("*", (req, res, next) => {
     const err = new Error(`Route ${req.originalUrl} not found`);
