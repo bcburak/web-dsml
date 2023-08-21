@@ -1,98 +1,45 @@
-import React,{ useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect, useEffect } from "react";
+import { useCookies } from "react-cookie";
 
-import '../src/components/Designer/style.css';
-import Tree from './components/Tree/Tree';
-import { Route, Routes } from 'react-router-dom';
-import Login from './components/Auth/Login';
-import  Home  from './components/Home/Home';
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router-dom";
+import Login from "./components/Auth/Login";
+import Home, { User } from "./components/Home/Home";
 
-const structure = [
-  {
-    type: "folder",
-    name: "client",
-    files: [
-      {
-        type: "folder",
-        name: "ui",
-        files: [
-          { type: "file", name: "Toggle.js" },
-          { type: "file", name: "Button.js" },
-          { type: "file", name: "Button.style.js" },
-        ],
-      },
-      {
-        type: "folder",
-        name: "components",
-        files: [
-          { type: "file", name: "Tree.js" },
-          { type: "file", name: "Tree.style.js" },
-        ],
-      },
-      { type: "file", name: "setup.js" },
-      { type: "file", name: "setupTests.js" },
-    ],
-  },
-  {
-    type: "folder",
-    name: "packages",
-    files: [
-      {
-        type: "file",
-        name: "main.js",
-      },
-    ],
-  },
-  { type: "file", name: "index.js" },
-];
+const App = () => {
+  const [user, setUser] = useState<User>(null);
 
+  useEffect(() => {
+    const theUser = localStorage.getItem("user");
+    console.log("theUser", theUser);
+    console.log("useremail", user?.email);
 
-function App() {
-  return(
-
-    <div>
-
-</div>
-   
+    if (theUser && !theUser.includes("undefined")) {
+      setUser(JSON.parse(theUser));
+      console.log("user", JSON.parse(theUser));
+    }
+  }, []);
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/login"
+          element={user?.email ? <Navigate to="/designer" /> : <Login />}
+        />
+        <Route
+          path="/designer"
+          element={
+            user?.email ? <Home user={user} /> : <Navigate to="/login" />
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
-
-//   let [data, setData] = useState(structure);
-
-//   const handleClick = (node: any) => {
-//     console.log(node);
-//   };
-//   const handleUpdate = (state: any) => {
-//     console.log(state);
-//     localStorage.setItem(
-//       "tree",
-//       JSON.stringify(state, function (key, value) {
-//         if (key === "parentNode" || key === "id") {
-//           return null;
-//         }
-//         return value;
-//       })
-//     );
-//   };
-
-//   useLayoutEffect(() => {
-//     try {
-//       let savedStructure = JSON.parse(localStorage.getItem("tree") as any);
-//       if (savedStructure) {
-//         setData(savedStructure);
-//       }
-//     } catch (err) {
-//       console.log(err);
-//     }
-//   }, []);
-//   return (
-//     <div style={{width:250}}>
-
-// <Tree children={[]} data={data} onUpdate={handleUpdate} onNodeClick={handleClick} />
-
-
-
-//     </div>
-    
-  // );
-}
+};
 
 export default App;

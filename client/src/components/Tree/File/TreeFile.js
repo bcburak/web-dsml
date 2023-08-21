@@ -2,7 +2,8 @@ import React, { useRef, useState } from "react";
 import { AiOutlineFile, AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 
 import { StyledFile } from "./TreeFile.style";
-import { useTreeContext } from "../state/TreeContext";
+// import { useTreeContext } from "../state/TreeContext";
+import { useTreeContext } from "../../../store/tree-context";
 import { ActionsWrapper, StyledName } from "../../Tree/Tree.style.js";
 import { PlaceholderInput } from "../../Tree/TreePlaceholderInput";
 
@@ -28,6 +29,7 @@ const File = ({ name, id, node }) => {
   const handleNodeClick = React.useCallback(
     (e) => {
       e.stopPropagation();
+      console.log("handle node clicl")
       onNodeClick({ node });
     },
     [node]
@@ -58,7 +60,7 @@ const File = ({ name, id, node }) => {
           </StyledName>
           {isImparative && (
             <div className="actions">
-              <AiOutlineEdit onClick={toggleEditing} />
+              {/* <AiOutlineEdit onClick={toggleEditing} /> */}
               <AiOutlineDelete onClick={commitDelete} />
             </div>
           )}

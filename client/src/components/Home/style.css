@@ -10,16 +10,9 @@ body,
   text-align: center;
 }
 
-
-
-
-
 body > #root > div {
   height: 100vh;
 }
-
-
-
 .dndflow {
   flex-direction: column;
   display: flex;
@@ -63,6 +56,18 @@ body > #root > div {
   height: 100%;
 }
 
+.save__controls {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  z-index: 4;
+  font-size: 15px;
+}
+
+.save__controls button {
+  margin-left: 5px;
+}
+
 @media screen and (min-width: 768px) {
   .dndflow {
     flex-direction: row;
@@ -73,3 +78,19 @@ body > #root > div {
     max-width: 250px;
   }
 }
+
+.text-updater-node {
+  height: 80px;
+  border: 1px solid #eee;
+  padding: 5px;
+  border-radius: 5px;
+  
+}
+
+.text-updater-node label {
+  display: block;
+  color: #c3d4d8;
+  font-size: 8px;
+  
+}
+

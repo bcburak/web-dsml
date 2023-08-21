@@ -47,6 +47,7 @@ export const ActionsWrapper = styled.div`
 
 export const StyledName = styled.div`
   background-color: white;
+  color:#1976d2;
   display: flex;
   align-items: center;
   cursor: pointer;
