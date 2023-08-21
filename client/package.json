@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "homepage": "https://bcburak.github.io/web-dsml/",
+  "homepage": "https://bcburak.github.io/designer/",
   "private": false,
   "dependencies": {
     "@blueprintjs/core": "^4.17.7",
@@ -44,9 +44,16 @@
     "react-treebeard": "^3.2.4",
     "react-treebeard-ts": "^3.2.5",
     "reactflow": "^11.4.0",
-    "styled-components": "^5.3.6",
     "typescript": "^4.9.4",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "@fontsource/roboto": "^4.5.8",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/lab": "^5.0.0-alpha.115",
+    "if-env": "^1.0.4",
+    "react-keyed-file-browser": "^1.14.0",
+    "sandpack-file-explorer": "^0.0.4",
+    "styled-components": "^5.3.6",
+    "uuid": "^9.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
