@@ -9,6 +9,7 @@ import {
   signToken,
 } from "../services/user.service";
 import AppError from "../utils/appError";
+import connectDB from "../utils/connectDB";
 const jwt = require("jsonwebtoken");
 
 // Exclude this fields from the response
@@ -153,6 +154,7 @@ export const login = async (
       var picture = profile.picture;
 
       console.log("email", email);
+      connectDB();
       const user = await findAndUpdateUser(
         { email },
         {

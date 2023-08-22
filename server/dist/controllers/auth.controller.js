@@ -8,10 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = exports.excludedFields = void 0;
 const config = require("config");
 const user_service_1 = require("../services/user.service");
+const connectDB_1 = __importDefault(require("../utils/connectDB"));
 const jwt = require("jsonwebtoken");
 // Exclude this fields from the response
 exports.excludedFields = ["password"];
@@ -134,6 +138,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             var name = profile.name;
             var picture = profile.picture;
             console.log("email", email);
+            (0, connectDB_1.default)();
             const user = yield (0, user_service_1.findAndUpdateUser)({ email }, {
                 name,
                 photo: picture,
