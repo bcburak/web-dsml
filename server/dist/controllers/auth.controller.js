@@ -130,10 +130,10 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
                 });
             }
             const profile = verificationResponse === null || verificationResponse === void 0 ? void 0 : verificationResponse.payload;
-            console.log("profile", profile);
             var email = profile.email;
             var name = profile.name;
             var picture = profile.picture;
+            console.log("email", email);
             const user = yield (0, user_service_1.findAndUpdateUser)({ email }, {
                 name,
                 photo: picture,
@@ -158,7 +158,9 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             });
         }
     }
-    catch (error) { }
+    catch (error) {
+        console.log("error", error);
+    }
 });
 exports.login = login;
 //# sourceMappingURL=auth.controller.js.map
