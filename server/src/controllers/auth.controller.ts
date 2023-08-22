@@ -148,11 +148,11 @@ export const login = async (
 
       const profile: GoogleUserResult = verificationResponse?.payload;
 
-      console.log("profile", profile);
       var email = profile.email;
       var name = profile.name;
       var picture = profile.picture;
 
+      console.log("email", email);
       const user = await findAndUpdateUser(
         { email },
         {
@@ -180,5 +180,7 @@ export const login = async (
         },
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log("error", error);
+  }
 };
