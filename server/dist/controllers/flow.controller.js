@@ -8,10 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFlowDataByFileName = exports.getFlowByUserId = exports.createUpdateFlowData = void 0;
 const config = require("config");
 const flow_service_1 = require("../services/flow.service");
+const connectDB_1 = __importDefault(require("../utils/connectDB"));
 // const userId = "640f65f14637a185a8ddcadc";
 const createUpdateFlowData = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -21,6 +25,7 @@ const createUpdateFlowData = (req, res, next) => __awaiter(void 0, void 0, void 
         console.log("flowFileName", req.body);
         console.log("flowFileData userId", userId);
         // let userId = "640f65f14637a185a8ddcadc";
+        (0, connectDB_1.default)();
         const flow = yield (0, flow_service_1.findAndUpdateFlowData)({ userId, flowFileName }, {
             flowFileName,
             flowFileData,
@@ -44,6 +49,7 @@ const getFlowByUserId = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const fileName = req.query.flowFileName;
         const userId = req.query.userId;
         console.log("userId getFlowByUserId", userId);
+        (0, connectDB_1.default)();
         const flow = yield (0, flow_service_1.findFlowDataByUserId)(userId, fileName);
         console.log("flow by user id info: ", flow);
         res.json(flow);
@@ -57,6 +63,7 @@ const getFlowDataByFileName = (req, res, next) => __awaiter(void 0, void 0, void
     try {
         const fileName = req.query.flowFileName;
         const userId = req.query.userId;
+        (0, connectDB_1.default)();
         const flow = yield (0, flow_service_1.findFlowDataByFileName)(fileName, userId);
         res.json(flow);
     }

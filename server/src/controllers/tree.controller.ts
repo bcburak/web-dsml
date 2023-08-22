@@ -6,6 +6,7 @@ import {
   findAndUpdateTree,
   findTreeByUserId,
 } from "../services/tree.service";
+import connectDB from "../utils/connectDB";
 
 export const createUpdateTree = async (
   req: Request,
@@ -15,7 +16,7 @@ export const createUpdateTree = async (
   try {
     var treeValue = req.body.treeValue;
     var userId = req.body.userId;
-
+    connectDB();
     const tree = await findAndUpdateTree(
       { userId },
       {
@@ -41,6 +42,7 @@ export const getTreeByUserId = async (
 ) => {
   try {
     const userId = req.query.userId as string;
+    connectDB();
     const tree = await findTreeByUserId(userId);
 
     console.log("tree by user id info: ", tree);

@@ -16,15 +16,8 @@ const express_1 = __importDefault(require("express"));
 const auth_controller_1 = require("../controllers/auth.controller");
 const tree_controller_1 = require("../controllers/tree.controller");
 const flow_controller_1 = require("../controllers/flow.controller");
-const connectDB_1 = __importDefault(require("../utils/connectDB"));
-// const jwt = require("jsonwebtoken");
-// const { OAuth2Client } = require("google-auth-library");
-// const clientId =
-//   "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com";
-// const client = new OAuth2Client(clientId); //(process.env.CLIENT_ID);
 const router = express_1.default.Router();
 console.log("get auth point");
-router.get("/connect", connectDB_1.default);
 router.get("/getTreeByUserId", tree_controller_1.getTreeByUserId);
 router.post("/createTree", tree_controller_1.createUpdateTree);
 router.post("/createFlowData", flow_controller_1.createUpdateFlowData);

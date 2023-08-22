@@ -137,10 +137,8 @@ export const login = async (
   next: NextFunction
 ) => {
   try {
-    console.log("log");
     if (req.body.credential) {
       const verificationResponse = await verifyGoogleToken(req.body.credential);
-      console.log("login", verificationResponse);
       if (verificationResponse.error) {
         return res.status(400).json({
           message: verificationResponse.error,
@@ -169,7 +167,7 @@ export const login = async (
       console.log("userid", user?._id);
       const secret = process.env.CLIENT_SECRET;
       res.status(201).json({
-        message: "Login was successful",
+        message: "Login is successful",
         user: {
           id: user?._id,
           firstName: profile?.given_name,

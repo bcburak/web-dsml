@@ -8,14 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getTreeByUserId = exports.createUpdateTree = void 0;
 const config = require("config");
 const tree_service_1 = require("../services/tree.service");
+const connectDB_1 = __importDefault(require("../utils/connectDB"));
 const createUpdateTree = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         var treeValue = req.body.treeValue;
         var userId = req.body.userId;
+        (0, connectDB_1.default)();
         const tree = yield (0, tree_service_1.findAndUpdateTree)({ userId }, {
             treeValue,
         }, {
@@ -35,6 +40,7 @@ exports.createUpdateTree = createUpdateTree;
 const getTreeByUserId = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userId = req.query.userId;
+        (0, connectDB_1.default)();
         const tree = yield (0, tree_service_1.findTreeByUserId)(userId);
         console.log("tree by user id info: ", tree);
         res.json(tree);

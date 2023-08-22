@@ -124,10 +124,8 @@ function verifyGoogleToken(token) {
 }
 const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("log");
         if (req.body.credential) {
             const verificationResponse = yield verifyGoogleToken(req.body.credential);
-            console.log("login", verificationResponse);
             if (verificationResponse.error) {
                 return res.status(400).json({
                     message: verificationResponse.error,
@@ -149,7 +147,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
             console.log("userid", user === null || user === void 0 ? void 0 : user._id);
             const secret = process.env.CLIENT_SECRET;
             res.status(201).json({
-                message: "Login was successful",
+                message: "Login is successful",
                 user: {
                     id: user === null || user === void 0 ? void 0 : user._id,
                     firstName: profile === null || profile === void 0 ? void 0 : profile.given_name,
