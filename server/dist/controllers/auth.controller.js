@@ -33,7 +33,7 @@ exports.excludedFields = ["password"];
 //   sameSite: "lax",
 // };
 const { OAuth2Client } = require("google-auth-library");
-const clientId = "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com";
+const clientId = process.env.CLIENT_ID;
 const client = new OAuth2Client(clientId); //(process.env.CLIENT_ID);
 // Only set secure to true in production
 // if (process.env.NODE_ENV === "production")
@@ -142,7 +142,7 @@ const login = (req, res, next) => __awaiter(void 0, void 0, void 0, function* ()
                 verified: true,
             }, { upsert: true, runValidators: false, new: true, lean: true });
             console.log("userid", user === null || user === void 0 ? void 0 : user._id);
-            const secret = "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";
+            const secret = process.env.CLIENT_SECRET;
             res.status(201).json({
                 message: "Login was successful",
                 user: {

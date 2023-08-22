@@ -17,9 +17,7 @@ const GoogleAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState("");
   const url =
-    "https://" +
-    `${process.env.REACT_APP_API_URL}` +
-    `:8000/api/sessions/login`; //"http://localhost:8000/api/sessions/login";
+    "https://" + `${process.env.REACT_APP_API_URL}` + `:/api/sessions/login`; //"http://localhost:8000/api/sessions/login";
   console.log("url", url);
   const onSuccess = async (res: any) => {
     console.log("onsuccess");

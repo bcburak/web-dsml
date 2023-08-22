@@ -41,7 +41,12 @@ const findUser = (query, options = {}) => __awaiter(void 0, void 0, void 0, func
 });
 exports.findUser = findUser;
 const findAndUpdateUser = (query, update, options) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield user_model_1.default.findOneAndUpdate(query, update, options);
+    try {
+        return yield user_model_1.default.findOneAndUpdate(query, update, options);
+    }
+    catch (error) {
+        console.log("findAndUpdateUser", error);
+    }
 });
 exports.findAndUpdateUser = findAndUpdateUser;
 // CreateUser service
