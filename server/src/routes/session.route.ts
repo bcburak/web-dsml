@@ -9,6 +9,7 @@ import {
   getFlowByUserId,
   getFlowDataByFileName,
 } from "../controllers/flow.controller";
+import connectDB from "../utils/connectDB";
 // const jwt = require("jsonwebtoken");
 // const { OAuth2Client } = require("google-auth-library");
 // const clientId =
@@ -17,6 +18,7 @@ import {
 
 const router = express.Router();
 console.log("get auth point");
+router.get("/connect", connectDB);
 
 router.get("/getTreeByUserId", getTreeByUserId);
 router.post("/createTree", createUpdateTree);

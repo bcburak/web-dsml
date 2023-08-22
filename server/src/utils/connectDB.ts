@@ -4,6 +4,7 @@ var config = require("config");
 
 const dbUrl: string = process.env.MONGO_DB_URL ?? "null"; //`mongodb+srv://webflowdb:wvWoEvkHUHgcSKGP@web-flow-dsml-cluster.cmisbke.mongodb.net/?retryWrites=true&w=majority`;
 
+console.log("dbUrl", dbUrl);
 // mongodb+srv://webflowdb:wvWoEvkHUHgcSKGP@web-flow-dsml-cluster.cmisbke.mongodb.net/?retryWrites=true&w=majority
 
 const connectDB = async () => {

@@ -17,6 +17,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 mongoose_1.default.set("strictQuery", false);
 var config = require("config");
 const dbUrl = (_a = process.env.MONGO_DB_URL) !== null && _a !== void 0 ? _a : "null"; //`mongodb+srv://webflowdb:wvWoEvkHUHgcSKGP@web-flow-dsml-cluster.cmisbke.mongodb.net/?retryWrites=true&w=majority`;
+console.log("dbUrl", dbUrl);
 // mongodb+srv://webflowdb:wvWoEvkHUHgcSKGP@web-flow-dsml-cluster.cmisbke.mongodb.net/?retryWrites=true&w=majority
 const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
