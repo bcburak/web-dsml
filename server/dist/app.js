@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv").config();
 const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
-const config_1 = __importDefault(require("config"));
 const cors_1 = __importDefault(require("cors"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const connectDB_1 = __importDefault(require("./utils/connectDB"));
@@ -51,7 +50,7 @@ app.use((err, req, res, next) => {
         message: err.message,
     });
 });
-const port = config_1.default.get("port");
+const port = process.env.PORT; //config.get<number>("port");
 app.listen(port, () => {
     console.log(`Server started on port: ${port}`);
     // 👇 call the connectDB function here
