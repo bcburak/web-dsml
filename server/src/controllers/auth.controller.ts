@@ -9,6 +9,7 @@ import {
   signToken,
 } from "../services/user.service";
 import AppError from "../utils/appError";
+import connectDB from "../utils/connectDB";
 const jwt = require("jsonwebtoken");
 
 // Exclude this fields from the response
@@ -34,8 +35,8 @@ export const excludedFields = ["password"];
 // };
 
 const { OAuth2Client } = require("google-auth-library");
-const clientId =
-  "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com";
+const clientId = process.env.CLIENT_ID;
+
 const client = new OAuth2Client(clientId); //(process.env.CLIENT_ID);
 // Only set secure to true in production
 // if (process.env.NODE_ENV === "production")
@@ -136,10 +137,8 @@ export const login = async (
   next: NextFunction
 ) => {
   try {
-    console.log("log");
     if (req.body.credential) {
       const verificationResponse = await verifyGoogleToken(req.body.credential);
-      console.log("login", verificationResponse);
       if (verificationResponse.error) {
         return res.status(400).json({
           message: verificationResponse.error,
@@ -148,11 +147,12 @@ export const login = async (
 
       const profile: GoogleUserResult = verificationResponse?.payload;
 
-      console.log("profile", profile);
       var email = profile.email;
       var name = profile.name;
       var picture = profile.picture;
 
+      console.log("email", email);
+      connectDB();
       const user = await findAndUpdateUser(
         { email },
         {
@@ -165,9 +165,9 @@ export const login = async (
         { upsert: true, runValidators: false, new: true, lean: true }
       );
       console.log("userid", user?._id);
-      const secret = "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";
+      const secret = process.env.CLIENT_SECRET;
       res.status(201).json({
-        message: "Login was successful",
+        message: "Login is successful",
         user: {
           id: user?._id,
           firstName: profile?.given_name,
@@ -180,5 +180,7 @@ export const login = async (
         },
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log("error", error);
+  }
 };

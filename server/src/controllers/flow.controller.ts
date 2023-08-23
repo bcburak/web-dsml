@@ -7,6 +7,7 @@ import {
   findFlowDataByFileName,
   findFlowDataByUserId,
 } from "../services/flow.service";
+import connectDB from "../utils/connectDB";
 
 // const userId = "640f65f14637a185a8ddcadc";
 export const createUpdateFlowData = async (
@@ -21,7 +22,7 @@ export const createUpdateFlowData = async (
     console.log("flowFileName", req.body);
     console.log("flowFileData userId", userId);
     // let userId = "640f65f14637a185a8ddcadc";
-
+    connectDB();
     const flow = await findAndUpdateFlowData(
       { userId, flowFileName },
       {
@@ -51,6 +52,7 @@ export const getFlowByUserId = async (
     const fileName = req.query.flowFileName as string;
     const userId = req.query.userId as string;
     console.log("userId getFlowByUserId", userId);
+    connectDB();
     const flow = await findFlowDataByUserId(userId, fileName);
 
     console.log("flow by user id info: ", flow);
@@ -68,6 +70,7 @@ export const getFlowDataByFileName = async (
   try {
     const fileName = req.query.flowFileName as string;
     const userId = req.query.userId as string;
+    connectDB();
     const flow = await findFlowDataByFileName(fileName, userId);
     res.json(flow);
   } catch (error) {

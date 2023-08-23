@@ -9,11 +9,6 @@ import {
   getFlowByUserId,
   getFlowDataByFileName,
 } from "../controllers/flow.controller";
-// const jwt = require("jsonwebtoken");
-// const { OAuth2Client } = require("google-auth-library");
-// const clientId =
-//   "126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com";
-// const client = new OAuth2Client(clientId); //(process.env.CLIENT_ID);
 
 const router = express.Router();
 console.log("get auth point");

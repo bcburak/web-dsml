@@ -20,7 +20,6 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useLocation } from "react-router-dom";
 import { ReactComponent as GoogleLogo } from "../../assets/google.svg";
-import useFetch from "../../hooks/useFetch";
 import GoogleAuth from "./GoogleAuth";
 
 const theme = createTheme();

@@ -17,6 +17,7 @@ import "reactflow/dist/style.css";
 import "../Home/style.css";
 import { useEdgeNames } from "../../store/flow-context";
 import CustomNode from "./CustomNode";
+import { callApi } from "../../utils/callApi";
 
 // const nodeTypes = {
 //   shape: ShapeNode,
@@ -92,46 +93,17 @@ const FlowLayout = (props: FlowProps) => {
     var file = props.fileName;
     if (spacePressed) {
       console.log("triggering");
-      let createFlowDataUrl =
-        "http://localhost:8000/api/sessions/createFlowData";
       if (reactFlowInstance) {
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            flowFileData: reactFlowInstance,
-            flowFileName: file,
-          }),
-        };
-        fetch(createFlowDataUrl, requestOptions)
-          .then(async (response) => {
-            const isJson = response.headers
-              .get("content-type")
-              ?.includes("application/json");
-            const data = isJson && (await response.json());
+        let flowInstanceData = JSON.stringify(reactFlowInstance.toObject());
+        console.log("flow instance", flowInstanceData);
 
-            // check for error response
-            if (!response.ok) {
-              // get error message from body or default to response status
-              const error = (data && data.message) || response.status;
-              return Promise.reject(error);
-            }
-
-            // this.setState({ postId: data.id })
-          })
-          .catch((error) => {
-            // this.setState({ errorMessage: error.toString() });
-            console.error("There was an error!", error);
-          });
-        // localStorage.setItem(
-        //   fileName,
-        //   JSON.stringify(reactFlowInstance.toObject())
-        // );
-        // alert("file saved");
-        // console.log(
-        //   "reactFlowInstance created:",
-        //   JSON.stringify(reactFlowInstance.toObject())
-        // );
+        callApi("/api/sessions/createFlowData", "POST", {
+          flowFileData: flowInstanceData,
+          flowFileName: props.fileName,
+          userId: props.userId,
+        }).then((data) => {
+          // alert("file saved");
+        });
       }
     }
   }, [spacePressed, props.fileName, reactFlowInstance]);
@@ -145,18 +117,13 @@ const FlowLayout = (props: FlowProps) => {
   const onRestore = useCallback(() => {
     //TODO: Get flow layout here
     const restoreFlow = async () => {
-      // const flow = JSON.parse(localStorage.getItem(fileName));
-      // console.log("getting flow", flow);
-      console.log("userId", props.userId);
-      console.log("fileName", props.fileName);
-      let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByUserId?flowFileName=${props.fileName}&userId=${props.userId}`;
-      fetch(getFlowUrl)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
+      // console.log("userId", props.userId);
+      // console.log("fileName", props.fileName);
+
+      callApi(
+        `/api/sessions/getFlowDataByUserId?flowFileName=${props.fileName}&userId=${props.userId}`,
+        "GET"
+      )
         .then((data) => {
           console.log("flowData data", data);
           let flowData = JSON.parse(data[0].flowFileData);
@@ -277,52 +244,30 @@ const FlowLayout = (props: FlowProps) => {
     }
   }
   const onSave = useCallback(() => {
-    let createFlowDataUrl = "http://localhost:8000/api/sessions/createFlowData";
+    // let createFlowDataUrl = "http://localhost:8000/api/sessions/createFlowData";
     if (reactFlowInstance) {
       let flowInstanceData = JSON.stringify(reactFlowInstance.toObject());
       console.log("flow instance", flowInstanceData);
 
-      const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          flowFileData: flowInstanceData,
-          flowFileName: props.fileName,
-          userId: props.userId,
-        }),
-      };
-      fetch(createFlowDataUrl, requestOptions)
-        .then(async (response) => {
-          const isJson = response.headers
-            .get("content-type")
-            ?.includes("application/json");
-          const data = isJson && (await response.json());
-
-          // check for error response
-          if (!response.ok) {
-            // get error message from body or default to response status
-            const error = (data && data.message) || response.status;
-            return Promise.reject(error);
-          }
-
-          // this.setState({ postId: data.id })
-        })
-        .catch((error) => {
-          // this.setState({ errorMessage: error.toString() });
-          console.error("There was an error!", error);
-        });
+      callApi("/api/sessions/createFlowData", "POST", {
+        flowFileData: flowInstanceData,
+        flowFileName: props.fileName,
+        userId: props.userId,
+      }).then((data) => {
+        // alert("file saved");
+      });
     }
-    if (reactFlowInstance) {
-      localStorage.setItem(
-        props.fileName,
-        JSON.stringify(reactFlowInstance.toObject())
-      );
-      alert("file saved");
-      // console.log(
-      //   "reactFlowInstance created:",
-      //   JSON.stringify(reactFlowInstance.toObject())
-      // );
-    }
+
+    localStorage.setItem(
+      props.fileName,
+      JSON.stringify(reactFlowInstance.toObject())
+    );
+    alert("file saved");
+
+    // console.log(
+    //   "reactFlowInstance created:",
+    //   JSON.stringify(reactFlowInstance.toObject())
+    // );
   }, [reactFlowInstance, props.fileName]);
 
   useEffect(() => {

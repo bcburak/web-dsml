@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import useFetchApi from "../../hooks/useFetchApi";
+import { callApi } from "../../utils/callApi";
 
-interface AuthResponse {
-  token: string;
+interface ApiResponse {
   user: User;
 }
 
@@ -13,48 +14,39 @@ interface User {
   avatar: string;
 }
 
-const GoogleAuth = () => {
+function GoogleAuth() {
   const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState("");
-  const url = "http://localhost:8000/api/sessions/login";
-  const onSuccess = async (res: any) => {
-    console.log("onsuccess");
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  // const { fetchData, responseData } = useFetchApi<ApiResponse>();
 
-      body: JSON.stringify({ credential: res.credential }),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log("data", data);
-        if (data?.user) {
-          localStorage.setItem("user", JSON.stringify(data?.user));
-          setUser(data.user);
-          window.location.reload();
-        }
+  // useEffect(() => {
+  //   if (responseData?.user) {
+  //     localStorage.setItem("user", JSON.stringify(responseData?.user));
+  //     setUser(responseData.user);
+  //     window.location.reload();
+  //   }
+  // }, [responseData]);
 
-        throw new Error(data?.message || data);
-      })
-      .catch((error) => {
-        setError(error?.message);
-      });
-  };
-
-  const responseGoogle = (response: any) => {
-    console.log("response", response);
+  const onGoogleSuccess = (credentialResponse: any) => {
+    callApi("/api/sessions/login", "POST", {
+      credential: credentialResponse.credential,
+    }).then((data) => {
+      localStorage.setItem("user", JSON.stringify(data?.user));
+      setUser(data.user);
+      window.location.reload();
+    });
   };
 
   return (
     <GoogleOAuthProvider clientId={`${process.env.REACT_APP_CLIENT_ID}`}>
       <GoogleLogin
-        onSuccess={(credentialResponse) => {
-          onSuccess(credentialResponse);
-        }}
+        onSuccess={
+          (credentialResponse: any) => {
+            onGoogleSuccess(credentialResponse);
+          }
+          // fetchData("/api/sessions/login", "POST", {
+          //   credential: credentialResponse.credential,
+          // })
+        }
         onError={() => {
           console.log("Login Failed");
         }}
@@ -64,25 +56,7 @@ const GoogleAuth = () => {
         logo_alignment="center"
       />
     </GoogleOAuthProvider>
-    // <div className="h-screen w-screen flex items-center justify-center flex-col">
-    //   {!user && (
-    //     <GoogleLogin
-    //       clientId="126611791804-882ill00ssfff57mq6m0df3sujj7knnf.apps.googleusercontent.com"
-    //       onSuccess={responseGoogle}
-    //       onFailure={responseGoogle}
-    //     />
-    //   )}
-
-    //   {user && (
-    //     <>
-    //       <img src={user.avatar} className="rounded-full" />
-    //       <h1 className="text-xl font-semibold text-center my-5">
-    //         {user.name}
-    //       </h1>
-    //     </>
-    //   )}
-    // </div>
   );
-};
+}
 
 export default GoogleAuth;

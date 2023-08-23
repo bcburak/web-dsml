@@ -36,7 +36,11 @@ export const findAndUpdateUser = async (
   update: UpdateQuery<User>,
   options: QueryOptions
 ) => {
-  return await userModel.findOneAndUpdate(query, update, options);
+  try {
+    return await userModel.findOneAndUpdate(query, update, options);
+  } catch (error) {
+    console.log("findAndUpdateUser", error);
+  }
 };
 
 // CreateUser service

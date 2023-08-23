@@ -36,6 +36,7 @@ import {
   convertMasModelToJava,
   createAndDownloadFiles,
 } from "../../utils/convertCode";
+import { callApi } from "../../utils/callApi";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -89,14 +90,10 @@ const Sidebar = (props: any) => {
     event.dataTransfer.effectAllowed = "move";
   };
   function onModelExportClick(): void {
-    let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`;
-    fetch(getFlowUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
+    callApi(
+      `/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`,
+      "GET"
+    )
       .then((data) => {
         const files = data.map((pair: any) => {
           return { filename: pair.flowFileName, content: pair.flowFileData };
@@ -107,6 +104,24 @@ const Sidebar = (props: any) => {
       .catch((error) => {
         console.error("Error fetching tree data:", error);
       });
+    // let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`;
+    // fetch(getFlowUrl)
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error("Network response was not ok");
+    //     }
+    //     return response.json();
+    //   })
+    //   .then((data) => {
+    //     const files = data.map((pair: any) => {
+    //       return { filename: pair.flowFileName, content: pair.flowFileData };
+    //     });
+    //     console.log("files-sidebar", files);
+    //     createAndDownloadFiles(files, "models");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching tree data:", error);
+    //   });
   }
 
   const [options, setOptions] = useState([]);
@@ -157,14 +172,10 @@ const Sidebar = (props: any) => {
     let environmentFileName: any;
     console.log("selectedProject", selectedProject);
 
-    let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`;
-    fetch(getFlowUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
+    callApi(
+      `/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`,
+      "GET"
+    )
       .then((data) => {
         const fileData = data.map((pair: any) => {
           return { fileName: pair.flowFileName, content: pair.flowFileData };
@@ -238,6 +249,88 @@ const Sidebar = (props: any) => {
       .catch((error) => {
         console.error("Error fetching tree data:", error);
       });
+
+    // let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`;
+    // fetch(getFlowUrl)
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw new Error("Network response was not ok");
+    //     }
+    //     return response.json();
+    //   })
+    //   .then((data) => {
+    //     const fileData = data.map((pair: any) => {
+    //       return { fileName: pair.flowFileName, content: pair.flowFileData };
+    //     });
+
+    //     console.log("fileData", fileData);
+    //     let masData = fileData.find((item: any) =>
+    //       item.fileName.includes(".mas")
+    //     );
+    //     let environmentData = fileData.find((item: any) =>
+    //       item.fileName.includes(".env")
+    //     );
+    //     console.log(masData);
+
+    //     console.log(environmentData);
+    //     const params = extractLabelsFromJSON(environmentData.content);
+    //     const environmentNodeName = environmentData.fileName
+    //       .split("_")[1]
+    //       .split(".")[0];
+    //     const masFileName = masData.fileName.split("_")[1].split(".")[0];
+    //     console.log(params);
+
+    //     var masCode = convertMasModelToJava(
+    //       masFileName,
+    //       environmentNodeName,
+    //       params
+    //     );
+    //     var envCode = convertEnvironmentModelToJava(
+    //       environmentNodeName,
+    //       params
+    //     );
+
+    //     var files = [];
+
+    //     files.push({
+    //       filename: masFileName + ".java",
+    //       content: masCode,
+    //     });
+    //     files.push({
+    //       filename: environmentNodeName + ".java",
+    //       content: envCode,
+    //     });
+
+    //     var agentNames = extractLabelsFromJSONforAgents(masData.content);
+    //     console.log("agentNames", agentNames);
+
+    //     for (var i = 0; i < agentNames.length; i++) {
+    //       var sourceLabel = getRelatedLabel(agentNames[i], masData.content);
+    //       console.log("source", sourceLabel);
+
+    //       // eslint-disable-next-line no-loop-func
+    //       let capabilityData = fileData.find((item: any) =>
+    //         item.fileName.includes(sourceLabel + ".cap")
+    //       );
+
+    //       console.log("capabilityData", capabilityData.content);
+    //       var planName = extractLabelsFromJSONforCapability(
+    //         capabilityData.content
+    //       );
+    //       console.log("planName" + [i], planName);
+
+    //       var fileName = agentNames[i] + ".asl";
+    //       var content = convertAgentsToAslFile(agentNames[i], planName); //"This is the content of " + agentName + " file.";
+
+    //       files.push({ filename: fileName, content: content });
+    //       console.log("files;", files);
+    //     }
+
+    //     createAndDownloadFiles(files, "codes");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error fetching tree data:", error);
+    //   });
   }
   // TODO: Refactor for generic method all node types
   function extractLabelsFromJSON(jsonString: any) {

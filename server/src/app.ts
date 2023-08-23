@@ -37,6 +37,10 @@ app.use(
 // 👇 Register the session router
 app.use("/api/sessions", sessionRouter);
 
+app.get("/ping", (_req: Request, res: Response) => {
+  return res.send("pong 🏓");
+});
+
 // UnKnown Routes
 app.all("*", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found`) as any;
@@ -55,7 +59,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   });
 });
 
-const port = config.get<number>("port");
+const port = process.env.PORT; //config.get<number>("port");
 app.listen(port, () => {
   console.log(`Server started on port: ${port}`);
   // 👇 call the connectDB function here

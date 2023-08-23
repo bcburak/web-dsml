@@ -45,6 +45,7 @@ import FlowProvider from "../../store/FlowProvider";
 // import { longTree, longTreeTemplate, readTemplate } from "../Tree/data";
 import { useEdgeNames } from "../../store/flow-context";
 import ResizableDrawer from "../Designer/ResizableDrawer";
+import { callApi } from "../../utils/callApi";
 
 interface Node {
   type: string;
@@ -342,41 +343,24 @@ function Home(user: any) {
   let [data, setData] = useState(treeStructure);
 
   const handleUpdate = (state: any) => {
-    console.log("update", state);
-    var baseUri = process.env.BASE_URI;
-    let createTreeUrl = "http://localhost:8000/api/sessions/createTree";
-
     let treeData = JSON.stringify(state, function (key, value) {
       if (key === "parentNode" || key === "id") {
         return null;
       }
       return value;
     });
-    const requestOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ treeValue: treeData, userId: user.user.id }),
-    };
-    fetch(createTreeUrl, requestOptions)
-      .then(async (response) => {
-        const isJson = response.headers
-          .get("content-type")
-          ?.includes("application/json");
-        const data = isJson && (await response.json());
 
-        // check for error response
-        if (!response.ok) {
-          // get error message from body or default to response status
-          const error = (data && data.message) || response.status;
-          return Promise.reject(error);
-        }
-
-        // this.setState({ postId: data.id })
-      })
+    callApi("/api/sessions/createTree", "POST", {
+      treeValue: treeData,
+      userId: user.user.id,
+    })
+      .then(async (response) => {})
       .catch((error) => {
-        // this.setState({ errorMessage: error.toString() });
         console.error("There was an error!", error);
       });
+
+    console.log("update", state);
+
     //TODO:Set tree item in mongo
     localStorage.setItem(
       "tree",
@@ -426,50 +410,29 @@ function Home(user: any) {
   };
 
   useLayoutEffect(() => {
-    let getTreeUrl = `http://localhost:8000/api/sessions/getTreeByUserId?userId=${user.user.id}`;
+    // let getTreeUrl = `http://localhost:8000/api/sessions/getTreeByUserId?userId=${user.user.id}`;
 
-    fetch(getTreeUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log("treedat", JSON.parse(data[0].treeValue));
-        setData(JSON.parse(data[0].treeValue)); // Assuming the API returns an array of treeValue fields
-      })
-      .catch((error) => {
-        console.error("Error fetching tree data:", error);
-      });
     // fetch(getTreeUrl)
-    //   .then((response) => response.json())
-    //   .then((data) => console.log("treed:", data));
-    // fetch(getTreeUrl)
-    //   .then(async (response) => {
-    //     const data = await response.json();
-    //     console.log("treedat", JSON.parse(data[0].treeValue));
-
-    //     // check for error response
+    //   .then((response) => {
     //     if (!response.ok) {
-    //       // get error message from body or default to response statusText
-    //       // const error = (data && data.message) || response.statusText;
-    //       // return Promise.reject(error);
+    //       throw new Error("Network response was not ok");
     //     }
-    //     let savedStructure = JSON.parse(data as any);
-    //     setData(savedStructure);
+    //     return response.json();
+    //   })
+    //   .then((data) => {
+    //     console.log("treedat", JSON.parse(data[0].treeValue));
+    //     setData(JSON.parse(data[0].treeValue)); // Assuming the API returns an array of treeValue fields
     //   })
     //   .catch((error) => {
-    //     console.error("There was an error!", error);
+    //     console.error("Error fetching tree data:", error);
     //   });
-    // try {
-    //   let savedStructure = JSON.parse(localStorage.getItem("tree") as any); //TODO: Get tree items from mongo
-    //   if (savedStructure) {
-    //     setData(savedStructure);
-    //   }
-    // } catch (err) {
-    //   console.log(err);
-    // }
+
+    callApi(`/api/sessions/getTreeByUserId?userId=${user.user.id}`, "GET").then(
+      (data) => {
+        console.log("treedat", JSON.parse(data[0].treeValue));
+        setData(JSON.parse(data[0].treeValue)); // Assuming the API returns an array of treeValue fields
+      }
+    );
   }, []);
 
   useEffect(() => {
