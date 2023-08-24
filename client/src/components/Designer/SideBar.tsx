@@ -128,45 +128,28 @@ const Sidebar = (props: any) => {
 
   useEffect(() => {
     // Simulating an asynchronous API call to fetch the array data
-    setTimeout(() => {
-      const dynamicArray = getProjectNamesFromLocalStorage; //["Option 1", "Option 2", "Option 3"];
-      setOptions(dynamicArray);
-    }, 2000); // Adjust the delay as needed
-  }, []);
+    console.log("instant tree", props.instantTreeData);
+    const projects = collectFolderNames(props.instantTreeData);
+    console.log("projects", projects);
+    setOptions(projects);
+  }, [props.instantTreeData]);
 
-  const getProjectNamesFromLocalStorage = () => {
-    let projectNames: any = [];
-    console.log("local;", localStorage.length);
-    for (var i = 0; i < localStorage.length; i++) {
-      // set iteration key name
-      var key = localStorage.key(i);
+  const collectFolderNames = (data: any) => {
+    const folderNames: any = [];
 
-      if (key.includes(".")) {
-        var name = key.split("_")[0];
-
-        if (!projectNames.includes(name)) {
-          projectNames.push(name);
+    const processNode = (node: any) => {
+      if (node.type === "folder") {
+        if (node.name !== "projects") folderNames.push(node.name);
+        if (node.files) {
+          node.files.forEach(processNode);
         }
-        console.log("key: ", key);
-        console.log("projects: ", projectNames);
       }
-    }
-    return projectNames;
+    };
+
+    data.forEach(processNode);
+    return folderNames;
   };
-  function getAllValuesWithKeyName(keyName: any) {
-    var matchingValues = [];
 
-    for (var i = 0; i < localStorage.length; i++) {
-      var key = localStorage.key(i);
-
-      if (key.includes(keyName)) {
-        var value = localStorage.getItem(key);
-        matchingValues.push({ key: key, value: value });
-      }
-    }
-
-    return matchingValues;
-  }
   function onCodeExportCodeClick(): void {
     let masFileName: any;
     let environmentFileName: any;
