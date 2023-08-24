@@ -47,54 +47,18 @@ import { useEdgeNames } from "../../store/flow-context";
 import ResizableDrawer from "../Designer/ResizableDrawer";
 import { callApi } from "../../utils/callApi";
 
-interface Node {
-  type: string;
+interface FileNode {
+  type: "file";
   name: string;
-  id: string;
 }
 
-const initialNodes = [
-  {
-    root: {
-      index: "root",
-      canMove: true,
-      isFolder: true,
-      children: ["Projects"],
-      data: "root",
-      canRename: true,
-    },
-    Projects: {
-      index: "Projects",
-      canMove: true,
-      isFolder: true,
-      children: ["GarbageCollector"],
-      data: "Projects",
-      canRename: true,
-    },
-    GarbageCollector: {
-      index: "GarbageCollector",
-      canMove: true,
-      isFolder: true,
-      children: ["Mas", "Blueberry"],
-      data: "GarbageCollector",
-      canRename: true,
-    },
-    Mas: {
-      index: "Mas",
-      canMove: true,
-      isFolder: false,
-      data: "Mas",
-      canRename: true,
-    },
-    Blueberry: {
-      index: "Blueberry",
-      canMove: true,
-      isFolder: false,
-      data: "Blueberry",
-      canRename: true,
-    },
-  },
-];
+interface FolderNode {
+  type: "folder";
+  name: string;
+  files: TreeNode[];
+}
+
+type TreeNode = FileNode | FolderNode;
 
 const initState = {
   name: "Project Files",
@@ -164,7 +128,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 var tabArrInc: any = [];
-const treeStructure = [
+const treeStructure: TreeNode[] = [
   {
     type: "folder",
     name: "projects",
@@ -202,51 +166,6 @@ export interface User {
   email: string;
   token: string;
 }
-const actualTree: ExactTree = {
-  root: {
-    index: "root",
-    canMove: true,
-    isFolder: true,
-    children: ["Projects"],
-    data: "root",
-    canRename: true,
-    countIndex: 2,
-  },
-  Projects: {
-    index: "Projects",
-    canMove: true,
-    isFolder: true,
-    children: ["GarbageCollector"],
-    data: "Projects",
-    canRename: true,
-    countIndex: 2,
-  },
-  GarbageCollector: {
-    index: "GarbageCollector",
-    canMove: true,
-    isFolder: true,
-    children: ["Mas", "Blueberry"],
-    data: "GarbageCollector",
-    canRename: true,
-    countIndex: 2,
-  },
-  Mas: {
-    index: "Mas",
-    canMove: true,
-    isFolder: false,
-    data: "Mas",
-    canRename: true,
-    countIndex: 2,
-  },
-  Blueberry: {
-    index: "Blueberry",
-    canMove: true,
-    isFolder: false,
-    data: "Blueberry",
-    canRename: true,
-    countIndex: 3,
-  },
-};
 
 const defaultDrawerWidth = 256;
 const minDrawerWidth = 50;
@@ -371,6 +290,8 @@ function Home(user: any) {
         return value;
       })
     );
+
+    setData(state);
   };
 
   const handleClick = (node: any) => {
@@ -639,6 +560,7 @@ function Home(user: any) {
           <Sidebar
             selectedPageName={selectedTab.split(".")[1]}
             userId={user.user.id}
+            instantTreeData={data}
           />
         </Drawer>
       </Box>

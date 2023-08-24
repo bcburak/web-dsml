@@ -26,7 +26,11 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 app.use(
   cors({
     credentials: true,
-    origin: ["http://localhost:3000"],
+    origin: [
+      "http://localhost:3000",
+      "https://web-dsml.vercel.app",
+      "https://web-dsml-git-master-bcburak.vercel.app",
+    ],
     methods: "GET,POST,PUT,DELETE,OPTIONS",
   })
 );
