@@ -37,7 +37,7 @@ export const createUpdateFlowData = async (
       }
     );
     console.log("flow info: ", flow);
-    return res;
+    res.status(201).json(flow);
   } catch (err: any) {
     console.log("Failed to post flow data", err);
   }

@@ -1,11 +1,7 @@
 import { DocumentType } from "@typegoose/typegoose";
 const config = require("config");
 import { CookieOptions, NextFunction, Request, Response } from "express";
-import {
-  createTree,
-  findAndUpdateTree,
-  findTreeByUserId,
-} from "../services/tree.service";
+import { findAndUpdateTree, findTreeByUserId } from "../services/tree.service";
 import connectDB from "../utils/connectDB";
 
 export const createUpdateTree = async (
@@ -30,7 +26,7 @@ export const createUpdateTree = async (
       }
     );
     // console.log("tree info: ", tree);
-    return res;
+    res.status(201).json(tree);
   } catch (err: any) {
     console.log("Failed to post tree data", err);
   }

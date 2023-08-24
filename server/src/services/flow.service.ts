@@ -52,5 +52,10 @@ export const findAndUpdateFlowData = async (
   update: UpdateQuery<FlowLayout>,
   options: QueryOptions
 ) => {
-  return await flowModel.findOneAndUpdate(query, update, options);
+  try {
+    return await flowModel.findOneAndUpdate(query, update, options);
+  } catch (error) {
+    console.log("findAndUpdateFlowData", error);
+    return error;
+  }
 };
