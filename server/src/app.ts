@@ -28,7 +28,8 @@ app.use(
     credentials: true,
     origin: [
       "http://localhost:3000",
-      "https://web-dsml.vercel.app,https://web-dsml-git-master-bcburak.vercel.app",
+      "https://web-dsml.vercel.app",
+      "https://web-dsml-git-master-bcburak.vercel.app",
     ],
     methods: "GET,POST,PUT,DELETE,OPTIONS",
   })
