@@ -3,12 +3,6 @@ import { FilterQuery, QueryOptions, UpdateQuery } from "mongoose";
 import { excludedFields } from "../controllers/auth.controller";
 import treeModel, { Tree } from "../models/tree.model";
 
-// CreateUser service
-export const createTree = async (input: Partial<Tree>) => {
-  const tree = await treeModel.create(input);
-  return omit(tree.toJSON(), excludedFields);
-};
-
 // Find one user by any fields
 export const findTree = async (
   query: FilterQuery<Tree>,
@@ -26,5 +20,10 @@ export const findAndUpdateTree = async (
   update: UpdateQuery<Tree>,
   options: QueryOptions
 ) => {
-  return await treeModel.findOneAndUpdate(query, update, options);
+  try {
+    return await treeModel.findOneAndUpdate(query, update, options);
+  } catch (error) {
+    console.log("findAndUpdateTree", error);
+    return error;
+  }
 };

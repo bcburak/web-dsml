@@ -11,6 +11,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import CircularProgress from "@mui/material/CircularProgress";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -214,8 +215,7 @@ function Home(user: any) {
       setDrawerWidth(newWidth);
     }
   }, []);
-
-  const [treeItems, setTreeItems] = useState<ExactTree>();
+  const [loading, setLoading] = React.useState(false);
 
   const handleChange = (event: any, newValue: any) => {
     setSelectedTab(newValue);
@@ -347,9 +347,10 @@ function Home(user: any) {
     //   .catch((error) => {
     //     console.error("Error fetching tree data:", error);
     //   });
-
+    setLoading(true);
     callApi(`/api/sessions/getTreeByUserId?userId=${user.user.id}`, "GET").then(
       (data) => {
+        setLoading(false);
         console.log("treedat", JSON.parse(data[0].treeValue));
         setData(JSON.parse(data[0].treeValue)); // Assuming the API returns an array of treeValue fields
       }
@@ -485,13 +486,25 @@ function Home(user: any) {
           </DrawerHeader>
 
           <Divider />
-
-          <Tree
-            children={[]}
-            data={data}
-            onUpdate={handleUpdate}
-            onNodeClick={handleClick}
-          />
+          {loading ? (
+            <CircularProgress
+              size={24}
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                marginTop: "-12px",
+                marginLeft: "-12px",
+              }}
+            />
+          ) : (
+            <Tree
+              children={[]}
+              data={data}
+              onUpdate={handleUpdate}
+              onNodeClick={handleClick}
+            />
+          )}
         </Drawer>
 
         <Main open={open}>
