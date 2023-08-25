@@ -21,6 +21,7 @@ export const findAndUpdateTree = async (
   options: QueryOptions
 ) => {
   try {
+    console.log("findAndUpdateTree");
     return await treeModel.findOneAndUpdate(query, update, options);
   } catch (error) {
     console.log("findAndUpdateTree", error);
