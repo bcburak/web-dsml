@@ -37,6 +37,10 @@ const App = () => {
             user?.email ? <Home user={user} /> : <Navigate to="/login" />
           }
         />
+        <Route
+          path="/"
+          element={user?.email ? <Navigate to="/designer" /> : <Login />}
+        />
       </Routes>
     </BrowserRouter>
   );

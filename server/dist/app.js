@@ -24,7 +24,11 @@ if (process.env.NODE_ENV === "development")
 // 4. Cors
 app.use((0, cors_1.default)({
     credentials: true,
-    origin: ["http://localhost:3000"],
+    origin: [
+        "http://localhost:3000",
+        "https://web-dsml.vercel.app",
+        "https://web-dsml-git-master-bcburak.vercel.app",
+    ],
     methods: "GET,POST,PUT,DELETE,OPTIONS",
 }));
 // // Routes
@@ -34,6 +38,9 @@ app.use((0, cors_1.default)({
 app.use("/api/sessions", session_route_1.default);
 app.get("/ping", (_req, res) => {
     return res.send("pong 🏓");
+});
+app.get("/", (req, res) => {
+    return res.send("welcome");
 });
 // UnKnown Routes
 app.all("*", (req, res, next) => {

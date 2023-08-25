@@ -50,7 +50,13 @@ const findFlowDataByUserId = (userId, fileName) => __awaiter(void 0, void 0, voi
 });
 exports.findFlowDataByUserId = findFlowDataByUserId;
 const findAndUpdateFlowData = (query, update, options) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield flowLayout_model_1.default.findOneAndUpdate(query, update, options);
+    try {
+        return yield flowLayout_model_1.default.findOneAndUpdate(query, update, options);
+    }
+    catch (error) {
+        console.log("findAndUpdateFlowData", error);
+        return error;
+    }
 });
 exports.findAndUpdateFlowData = findAndUpdateFlowData;
 //# sourceMappingURL=flow.service.js.map
