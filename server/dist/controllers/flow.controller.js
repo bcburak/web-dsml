@@ -36,7 +36,7 @@ const createUpdateFlowData = (req, res, next) => __awaiter(void 0, void 0, void 
             lean: true,
         });
         console.log("flow info: ", flow);
-        return res;
+        res.status(201).json(flow);
     }
     catch (err) {
         console.log("Failed to post flow data", err);

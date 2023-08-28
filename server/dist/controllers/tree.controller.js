@@ -29,8 +29,8 @@ const createUpdateTree = (req, res, next) => __awaiter(void 0, void 0, void 0, f
             new: true,
             lean: true,
         });
-        // console.log("tree info: ", tree);
-        return res;
+        console.log("tree updated: ", tree);
+        res.status(201).json(tree);
     }
     catch (err) {
         console.log("Failed to post tree data", err);

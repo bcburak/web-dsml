@@ -25,7 +25,7 @@ export const createUpdateTree = async (
         lean: true,
       }
     );
-    // console.log("tree info: ", tree);
+    console.log("tree updated: ", tree);
     res.status(201).json(tree);
   } catch (err: any) {
     console.log("Failed to post tree data", err);
