@@ -18,6 +18,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import * as MUIcon from "@mui/icons-material";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import FireplaceIcon from "@mui/icons-material/Fireplace";
 import EventIcon from "@mui/icons-material/Event";
@@ -84,8 +85,13 @@ const Sidebar = (props: any) => {
     setSelectedProject(event.target.value);
   };
 
-  const onDragStart = (event: any, nodeType: any, nodeName: string) => {
-    var obj = { type: nodeType, name: nodeName };
+  const onDragStart = (
+    event: any,
+    nodeType: any,
+    nodeName: string,
+    icon: keyof typeof MUIcon
+  ) => {
+    var obj = { type: nodeType, name: nodeName, icon: icon };
     event.dataTransfer.setData("application/reactflow", JSON.stringify(obj));
     event.dataTransfer.effectAllowed = "move";
   };
@@ -104,24 +110,6 @@ const Sidebar = (props: any) => {
       .catch((error) => {
         console.error("Error fetching tree data:", error);
       });
-    // let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`;
-    // fetch(getFlowUrl)
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Network response was not ok");
-    //     }
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     const files = data.map((pair: any) => {
-    //       return { filename: pair.flowFileName, content: pair.flowFileData };
-    //     });
-    //     console.log("files-sidebar", files);
-    //     createAndDownloadFiles(files, "models");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error fetching tree data:", error);
-    //   });
   }
 
   const [options, setOptions] = useState([]);
@@ -433,7 +421,7 @@ const Sidebar = (props: any) => {
           <Stack direction="row" spacing={3}>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "agent")
+                onDragStart(event, "default", "agent", "AccessibilityNew")
               }
               draggable
             >
@@ -444,7 +432,12 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "capability")
+                onDragStart(
+                  event,
+                  "default",
+                  "capability",
+                  "PsychologyOutlined"
+                )
               }
               draggable
             >
@@ -455,7 +448,7 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "environment")
+                onDragStart(event, "default", "environment", "CycloneOutlined")
               }
               draggable
             >
@@ -470,7 +463,7 @@ const Sidebar = (props: any) => {
           <Stack direction="row" spacing={3}>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "event")
+                onDragStart(event, "default", "event", "Event")
               }
               draggable
             >
@@ -480,7 +473,7 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "operation")
+                onDragStart(event, "default", "operation", "DonutSmallOutlined")
               }
               draggable
             >
@@ -495,7 +488,7 @@ const Sidebar = (props: any) => {
           <Stack direction="row" spacing={3}>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "belief")
+                onDragStart(event, "default", "belief", "Fireplace")
               }
               draggable
             >
@@ -506,7 +499,7 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "plan")
+                onDragStart(event, "default", "plan", "RateReviewOutlined")
               }
               draggable
             >
@@ -517,7 +510,12 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "subCapability")
+                onDragStart(
+                  event,
+                  "default",
+                  "subCapability",
+                  "DisplaySettingsOutlined"
+                )
               }
               draggable
             >
@@ -528,7 +526,12 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "relation")
+                onDragStart(
+                  event,
+                  "default",
+                  "relation",
+                  "CompareArrowsOutlined"
+                )
               }
               draggable
             >
@@ -543,7 +546,7 @@ const Sidebar = (props: any) => {
           <Stack direction="row" spacing={3}>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "action")
+                onDragStart(event, "default", "action", "PlayCircleFilledWhite")
               }
               draggable
             >
@@ -554,7 +557,7 @@ const Sidebar = (props: any) => {
             </Item>{" "}
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "message")
+                onDragStart(event, "default", "message", "MarkAsUnreadOutlined")
               }
               draggable
             >
@@ -565,7 +568,12 @@ const Sidebar = (props: any) => {
             </Item>
             <Item
               onDragStart={(event: any) =>
-                onDragStart(event, "default", "relation")
+                onDragStart(
+                  event,
+                  "default",
+                  "relation",
+                  "CompareArrowsOutlined"
+                )
               }
               draggable
             >

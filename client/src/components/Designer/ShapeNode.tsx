@@ -1,6 +1,6 @@
 import { Handle, NodeProps, Position } from "reactflow";
 
-const handleStyle = { opacity: 0 };
+const handleStyle = { borderRadius: "0" };
 
 type UseShapeOptions = {
   type: string;
@@ -118,7 +118,7 @@ function ShapeNode({ data, selected }: NodeProps) {
         id="top"
         style={handleStyle}
         position={Position.Top}
-        type="source"
+        type="target"
         isConnectable={true}
       />
       <Handle
