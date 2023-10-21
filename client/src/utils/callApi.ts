@@ -20,6 +20,7 @@ export function callApi(path: string, method: HttpMethod, body?: any) {
   // eslint-disable-next-line no-useless-concat
   const response = fetch("https://" + `${apiUrl}${path}`, options)
     .then((data) => {
+      console.log("api", apiUrl);
       if (!data.ok) {
         throw new Error("Network response was not ok");
       }

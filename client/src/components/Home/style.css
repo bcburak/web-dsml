@@ -93,4 +93,123 @@ body > #root > div {
   font-size: 8px;
   
 }
+.custom-node {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+  background: #2196F3;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
 
+.left-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 5px; /* Add margin to separate left content and title */
+  width: 48px;
+  height: 48px;
+  background: white; 
+  border-radius: 50%;
+  margin-bottom: 10px; 
+}
+
+.icon {
+  font-size: 24px; /* Adjust the icon size as needed */
+  margin-top: 25px;
+}
+
+.subtitle {
+  font-size: 9px; /* Small font size for subtitle */
+}
+
+.title {
+  font-size: 18px; /* Larger font size for title */
+  font-weight: bold;
+  text-align: right; /* Align title to the right */
+}
+/* .custom-node {
+  display: flex;
+  align-items: center;
+  width: 150px;
+  background: #2196F3;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
+.icon-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: white; 
+  border-radius: 50%;
+  margin-bottom: 10px; 
+}
+.icon {
+  font-size: 2px; 
+}
+
+.text-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 10px;
+} */
+/* 
+.custom-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px;
+  background: #2196F3;
+  border-radius: 8px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: white; /* Change the background color as needed */
+  /* border-radius: 50%;
+  margin-bottom: 10px; /* Add margin to separate icon and subtitle */
+/* } */
+
+/* .icon {
+  font-size: 24px; 
+} */
+
+/* .text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; 
+} */
+
+/* .title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+} */
+/* 
+.subtitle {
+  font-size: 14px;
+}  */

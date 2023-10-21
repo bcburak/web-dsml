@@ -19,6 +19,8 @@ import { useEdgeNames } from "../../store/flow-context";
 import CustomNode from "./CustomNode";
 import { callApi } from "../../utils/callApi";
 import CircularProgress from "@mui/material/CircularProgress";
+import EventIcon from "@mui/icons-material/Event";
+import * as MUIcon from "@mui/icons-material";
 
 // const nodeTypes = {
 //   shape: ShapeNode,
@@ -43,7 +45,7 @@ const keyMap = {
 
 const FlowLayout = (props: FlowProps) => {
   const spacePressed = useKeyPress(["Control+s", "Command+s"]);
-  const { edgeName, isDownloadActive, setdownloadClicked } = useEdgeNames();
+  const { edgeName, setNodeSubtitle } = useEdgeNames();
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -146,6 +148,15 @@ const FlowLayout = (props: FlowProps) => {
       const type = event.dataTransfer.getData("application/reactflow");
       console.log("event", JSON.parse(type));
       console.log("type", JSON.parse(type).name);
+      console.log("icon", JSON.parse(type).icon);
+
+      let icon = JSON.parse(type).icon;
+      if (icon === "undefined") {
+        icon = "";
+      }
+
+      console.log("ico", icon);
+
       // check if the dropped element is valid
       if (typeof type === "undefined" || !type) {
         console.log("invalid");
@@ -164,7 +175,9 @@ const FlowLayout = (props: FlowProps) => {
         position,
         data: {
           label: `${nodeTypeName} node`,
+          subtitle: `${nodeTypeName}`,
           name: `${nodeTypeName}`,
+          icon: JSON.parse(type).icon,
           colorCode: colorCode,
         },
 
@@ -180,6 +193,7 @@ const FlowLayout = (props: FlowProps) => {
       };
 
       setNodes((nds) => nds.concat(newNode));
+      console.log("ondropsetNodes", reactFlowInstance.toObject());
     },
     [reactFlowInstance, setNodes]
   );
@@ -187,29 +201,29 @@ const FlowLayout = (props: FlowProps) => {
   function colorizedNodes(nodeTypeName: string) {
     switch (nodeTypeName) {
       case "agent":
-        return "#33B2FF";
+        return "rgba(51, 178, 255 , 0.50)";
       case "capability":
-        return "#33FFCE";
+        return "rgba(51, 255, 206, 0.50)";
       case "envrionment":
-        return "#FFD433";
+        return "rgba(255, 212, 51, 0.50)";
       case "event":
-        return "#FFAC33";
+        return "rgba(255, 172, 51, 0.50)";
       case "operation":
-        return "#AA8FC0";
+        return "rgba(170, 143, 192, 0.50)";
       case "belief":
-        return "#FF6433";
+        return "rgba(255, 100, 51, 0.50)";
       case "plan":
-        return "#C08FAE";
+        return "rgba(192, 143, 174, 0.50)";
       case "subCapability":
-        return "#C8C4C6";
+        return "rgba(200, 196, 198, 0.50)";
       case "relation":
-        return "#E1EBE7";
+        return "rgba(225, 235, 231, 0.50)";
       case "message":
-        return "#55BBFD";
+        return "rgba(85, 187, 253, 0.50)";
       case "environment":
-        return "#3D47F0";
+        return "rgba(61, 71, 240, 0.50)";
       case "action":
-        return "#FF6433";
+        return "rgba(255, 100, 51, 0.50)";
     }
   }
   const onSave = useCallback(() => {
@@ -228,10 +242,10 @@ const FlowLayout = (props: FlowProps) => {
       });
     }
 
-    localStorage.setItem(
-      props.fileName,
-      JSON.stringify(reactFlowInstance.toObject())
-    );
+    // localStorage.setItem(
+    //   props.fileName,
+    //   JSON.stringify(reactFlowInstance.toObject())
+    // );
   }, [reactFlowInstance, props.fileName]);
 
   useEffect(() => {
@@ -253,7 +267,10 @@ const FlowLayout = (props: FlowProps) => {
   const onNodeClick = useCallback((event: any, element: Node | Edge) => {
     setSelectedNodeState(element.id);
     setNodeName(element.data.label);
+    const nodeSubtitle = element.data.subtitle;
+    setNodeSubtitle(nodeSubtitle);
 
+    console.log("nodeSubtitle", nodeSubtitle);
     console.log("clicked", element);
   }, []);
   const onNodeDoubleClick = useCallback((event: any, element: Node | Edge) => {
@@ -261,9 +278,9 @@ const FlowLayout = (props: FlowProps) => {
     console.log("double");
   }, []);
 
-  const handlers = {
-    SAVE_LAYOUT: () => console.log("saved"),
-  };
+  // const handlers = {
+  //   SAVE_LAYOUT: () => console.log("saved"),
+  // };
 
   return (
     <ReactFlowProvider>

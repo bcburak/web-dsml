@@ -22,7 +22,9 @@ type FlowContextType = {
   reactFlowInstance: any;
   setReactFlowInstance: (reactFlowInstance: any) => void;
   nodeName: any;
+  nodeSubtitle: any;
   setNodeName: (reactFlowInstance: any) => void;
+  setNodeSubtitle: (reactFlowInstance: any) => void;
 };
 
 const FlowContext = React.createContext<FlowContextType | null>({
@@ -34,7 +36,9 @@ const FlowContext = React.createContext<FlowContextType | null>({
   reactFlowInstance: null,
   setReactFlowInstance: () => console.log("setReactFlowInstance"),
   nodeName: null,
+  nodeSubtitle: null,
   setNodeName: () => console.log("setReactFlowInstance"),
+  setNodeSubtitle: () => console.log("setNodeSubtitle"),
 });
 export { FlowContext };
 export const useEdgeNames = () => useContext(FlowContext);
