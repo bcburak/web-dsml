@@ -58,8 +58,8 @@ To run the codebase, you will need mainly ;
 ### Installation
 
 
-#cd client npm install
-#cd server npm install
+- cd client npm install
+- cd server npm install
 
 
 ### Usage
