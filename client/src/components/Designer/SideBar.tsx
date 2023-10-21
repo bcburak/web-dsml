@@ -10,6 +10,8 @@ import {
   ButtonGroup,
   Divider,
   FormControl,
+  FormControlLabel,
+  FormGroup,
   Grid,
   InputLabel,
   MenuItem,
@@ -18,6 +20,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import Checkbox from "@mui/material/Checkbox";
 import * as MUIcon from "@mui/icons-material";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import FireplaceIcon from "@mui/icons-material/Fireplace";
@@ -49,7 +52,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 const Sidebar = (props: any) => {
   const { setEdgeName, setdownloadClicked, reactFlowInstance } = useEdgeNames();
-  const { nodeName, setNodeName } = useEdgeNames();
+  const { nodeName, setNodeName, nodeSubtitle, setNodeSubtitle } =
+    useEdgeNames();
   const [selectedProject, setSelectedProject] = React.useState("");
 
   interface Node {
@@ -58,10 +62,16 @@ const Sidebar = (props: any) => {
     id: string;
     type: string;
     position: { x: number; y: number };
-    data: { label: string };
+    data: { label: string; name: string };
     selected: boolean;
     positionAbsolute: { x: number; y: number };
     dragging: boolean;
+  }
+
+  interface AslData {
+    planName: string;
+    beliefs: string;
+    actions?: string[];
   }
 
   interface Edge {
@@ -105,7 +115,7 @@ const Sidebar = (props: any) => {
           return { filename: pair.flowFileName, content: pair.flowFileData };
         });
         console.log("files-sidebar", files);
-        createAndDownloadFiles(files, "models");
+        createAndDownloadFiles(files, selectedProject + "_models");
       })
       .catch((error) => {
         console.error("Error fetching tree data:", error);
@@ -139,8 +149,6 @@ const Sidebar = (props: any) => {
   };
 
   function onCodeExportCodeClick(): void {
-    let masFileName: any;
-    let environmentFileName: any;
     console.log("selectedProject", selectedProject);
 
     callApi(
@@ -163,11 +171,32 @@ const Sidebar = (props: any) => {
 
         console.log(environmentData);
         const params = extractLabelsFromJSON(environmentData.content);
-        const environmentNodeName = environmentData.fileName
-          .split("_")[1]
-          .split(".")[0];
-        const masFileName = masData.fileName.split("_")[1].split(".")[0];
+        let environmentNodeName;
+        const beforeDotEnv = environmentData.fileName.split(".env")[0];
+        const afterLastUnderscore = beforeDotEnv.split("_").pop();
+
+        if (afterLastUnderscore) {
+          environmentNodeName = afterLastUnderscore;
+          console.log("beforeDotEnv", beforeDotEnv);
+          console.log("afterLastUnderscore", afterLastUnderscore);
+        } else {
+          console.log("Pattern not found");
+        }
+        let masFileName = "";
+
+        const beforeDotMas = masData.fileName.split(".mas")[0];
+        const afterLastUnderscoreMas = beforeDotMas.split("_").pop();
+
+        if (afterLastUnderscoreMas) {
+          masFileName = afterLastUnderscoreMas;
+        } else {
+          console.log("Pattern not found");
+        }
         console.log(params);
+
+        if (masFileName === environmentNodeName) {
+          masFileName = masFileName + "MAS";
+        }
 
         var masCode = convertMasModelToJava(
           masFileName,
@@ -193,115 +222,102 @@ const Sidebar = (props: any) => {
         var agentNames = extractLabelsFromJSONforAgents(masData.content);
         console.log("agentNames", agentNames);
 
+        // var allCapabilitiesForMas = getCapabilitiesWithRelatedAgentsFor(
+        //   masData.content
+        // );
+        // console.log("asd", allCapabilitiesForMas); //TODO: Check the subcapability if necessary
+
         for (var i = 0; i < agentNames.length; i++) {
-          var sourceLabel = getRelatedLabel(agentNames[i], masData.content);
-          console.log("source", sourceLabel);
+          var sourceLabel = getCapabilitiesWithRelatedAgents(
+            agentNames[i],
+            masData.content
+          );
 
           // eslint-disable-next-line no-loop-func
           let capabilityData = fileData.find((item: any) =>
-            item.fileName.includes(sourceLabel + ".cap")
+            item.fileName
+              .toLowerCase()
+              .includes(sourceLabel.toLowerCase() + ".cap")
+          );
+          const capabilityJsonData = JSON.parse(capabilityData.content);
+          console.log("capabilityJsonData", capabilityJsonData);
+          let aslFileMainList: AslData[] = [];
+
+          capabilityJsonData.nodes.forEach(
+            (nodeElement: { data: { label: string; name: string } }) => {
+              if (
+                nodeElement.data.name === "belief" ||
+                nodeElement.data.name === "relation"
+              ) {
+                console.log("belief or rel", nodeElement.data.label);
+              }
+              if (nodeElement.data.name === "plan") {
+                const planName: string = nodeElement.data.label;
+
+                let connectedNodesWithPlans =
+                  checkBeliefOfRelationNodeHasConnectionWithPlan(
+                    planName,
+                    capabilityJsonData
+                  );
+                console.log(
+                  "connectedNodesWithPlans_",
+                  planName + "," + connectedNodesWithPlans
+                );
+                // connectedNodesWithPlans.map(function(x){return x.replace(/,/g, ';');});
+
+                aslFileMainList.push({
+                  planName: planName,
+                  beliefs: connectedNodesWithPlans.join(";"),
+                  actions: [],
+                });
+
+                let planData = fileData.find((item: any) =>
+                  item.fileName
+                    .toLowerCase()
+                    .includes(planName.toLowerCase() + ".pln")
+                );
+
+                let planJsonData = JSON.parse(planData.content);
+
+                planJsonData.nodes.forEach(
+                  (planNodeElement: { data: { name: string; label: any } }) => {
+                    if (
+                      planNodeElement.data.name === "action" ||
+                      planNodeElement.data.name === "message"
+                    ) {
+                      const action = planNodeElement.data.label;
+
+                      const matchingAslData = aslFileMainList.find(
+                        (aslData) => aslData.planName === planName
+                      );
+                      if (matchingAslData) {
+                        matchingAslData.actions =
+                          matchingAslData.actions.concat(action);
+                      }
+                      console.log("plan with actions", planName + "," + action);
+                    }
+                  }
+                );
+              }
+            }
           );
 
-          console.log("capabilityData", capabilityData.content);
-          var planName = extractLabelsFromJSONforCapability(
-            capabilityData.content
-          );
-          console.log("planName" + [i], planName);
-
+          console.log("asldata;", aslFileMainList);
           var fileName = agentNames[i] + ".asl";
-          var content = convertAgentsToAslFile(agentNames[i], planName); //"This is the content of " + agentName + " file.";
+          var content = convertAgentsToAslFile(agentNames[i], aslFileMainList); //"This is the content of " + agentName + " file.";
 
           files.push({ filename: fileName, content: content });
           console.log("files;", files);
         }
 
-        createAndDownloadFiles(files, "codes");
+        createAndDownloadFiles(files, selectedProject + "_codes");
       })
       .catch((error) => {
+        alert(
+          "Please be sure that each plan/capability has value and matched with file names!"
+        );
         console.error("Error fetching tree data:", error);
       });
-
-    // let getFlowUrl = `http://localhost:8000/api/sessions/getFlowDataByFileName?flowFileName=${selectedProject}&userId=${props.userId}`;
-    // fetch(getFlowUrl)
-    //   .then((response) => {
-    //     if (!response.ok) {
-    //       throw new Error("Network response was not ok");
-    //     }
-    //     return response.json();
-    //   })
-    //   .then((data) => {
-    //     const fileData = data.map((pair: any) => {
-    //       return { fileName: pair.flowFileName, content: pair.flowFileData };
-    //     });
-
-    //     console.log("fileData", fileData);
-    //     let masData = fileData.find((item: any) =>
-    //       item.fileName.includes(".mas")
-    //     );
-    //     let environmentData = fileData.find((item: any) =>
-    //       item.fileName.includes(".env")
-    //     );
-    //     console.log(masData);
-
-    //     console.log(environmentData);
-    //     const params = extractLabelsFromJSON(environmentData.content);
-    //     const environmentNodeName = environmentData.fileName
-    //       .split("_")[1]
-    //       .split(".")[0];
-    //     const masFileName = masData.fileName.split("_")[1].split(".")[0];
-    //     console.log(params);
-
-    //     var masCode = convertMasModelToJava(
-    //       masFileName,
-    //       environmentNodeName,
-    //       params
-    //     );
-    //     var envCode = convertEnvironmentModelToJava(
-    //       environmentNodeName,
-    //       params
-    //     );
-
-    //     var files = [];
-
-    //     files.push({
-    //       filename: masFileName + ".java",
-    //       content: masCode,
-    //     });
-    //     files.push({
-    //       filename: environmentNodeName + ".java",
-    //       content: envCode,
-    //     });
-
-    //     var agentNames = extractLabelsFromJSONforAgents(masData.content);
-    //     console.log("agentNames", agentNames);
-
-    //     for (var i = 0; i < agentNames.length; i++) {
-    //       var sourceLabel = getRelatedLabel(agentNames[i], masData.content);
-    //       console.log("source", sourceLabel);
-
-    //       // eslint-disable-next-line no-loop-func
-    //       let capabilityData = fileData.find((item: any) =>
-    //         item.fileName.includes(sourceLabel + ".cap")
-    //       );
-
-    //       console.log("capabilityData", capabilityData.content);
-    //       var planName = extractLabelsFromJSONforCapability(
-    //         capabilityData.content
-    //       );
-    //       console.log("planName" + [i], planName);
-
-    //       var fileName = agentNames[i] + ".asl";
-    //       var content = convertAgentsToAslFile(agentNames[i], planName); //"This is the content of " + agentName + " file.";
-
-    //       files.push({ filename: fileName, content: content });
-    //       console.log("files;", files);
-    //     }
-
-    //     createAndDownloadFiles(files, "codes");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error fetching tree data:", error);
-    //   });
   }
   // TODO: Refactor for generic method all node types
   function extractLabelsFromJSON(jsonString: any) {
@@ -346,52 +362,92 @@ const Sidebar = (props: any) => {
     return labels;
   }
 
-  function extractLabelsFromJSONforCapability(jsonString: any) {
-    var json = JSON.parse(jsonString);
-    var nodes = json.nodes;
-    console.log("nodes", nodes);
-    var planName = null;
+  function checkBeliefOfRelationNodeHasConnectionWithPlan(
+    nodeLabel: string,
+    capabilityData: any
+  ): string[] {
+    console.log("capabilityData", capabilityData);
+    let nodes = capabilityData.nodes;
+    let edges = capabilityData.edges;
 
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
-      // console.log("node", node.data);
-      // var data = JSON.parse(node.data);
-      let nodeData = node.data;
-      // var type = JSON.parse(node.data);
-      // var label = node.data.label;
-      // console.log("label", label);
-      // console.log("label123", node.data.label);
-      if (nodeData.name === "plan") planName = nodeData.label;
-      // labels.push(label);
+    const connectedNodes = nodes.filter(
+      (node: { data: { label: any } }) => node.data.label === nodeLabel
+    );
+    if (connectedNodes.length === 0) {
+      // Node not found
+      return [];
     }
+    const connectedLabels: string[] = [];
+    let nodeLabels = "";
+    connectedNodes.forEach((node: { id: any }) => {
+      edges.forEach((edge: { source: any; target: any }) => {
+        if (edge.source === node.id) {
+          const targetNode = nodes.find(
+            (n: { id: any }) => n.id === edge.target
+          );
+          if (targetNode) {
+            nodeLabels = targetNode.data.label;
+            if (nodeLabels.includes(":")) {
+              nodeLabels = nodeLabels.split(":")[1];
+            }
+            connectedLabels.push(nodeLabels);
+          }
+        }
+        if (edge.target === node.id) {
+          const sourceNode = nodes.find(
+            (n: { id: any }) => n.id === edge.source
+          );
+          if (sourceNode) {
+            nodeLabels = sourceNode.data.label;
+            if (sourceNode.data.label.includes(":")) {
+              nodeLabels = nodeLabels.split(":")[1];
+            }
+            connectedLabels.push(nodeLabels);
+          }
+        }
+      });
+    });
 
-    return planName;
+    return connectedLabels;
   }
 
-  function getRelatedLabel(agent: string, masData: any): string | null {
+  function getCapabilitiesWithRelatedAgents(
+    agent: string,
+    masData: any
+  ): string | null {
     const data: Data = JSON.parse(masData);
+    console.log("agent", agent);
     console.log("masData", data);
-    let collectorId: string | null = null;
+    let nodeId: string | null = null;
     data.nodes.forEach((node) => {
       if (node.data.label === agent) {
-        collectorId = node.id;
+        nodeId = node.id;
         return;
       }
     });
-    console.log("collectorId", collectorId);
+    console.log("nodeId", nodeId);
 
-    let sourceValue: string | null = null;
+    let edgeId: string | null = null;
     data.edges.forEach((edge) => {
-      if (edge.target === collectorId) {
-        sourceValue = edge.source;
+      if (edge.target === nodeId) {
+        edgeId = edge.source;
         return;
       }
     });
-    console.log("sourceValue", sourceValue);
+
+    if (edgeId == null) {
+      data.edges.forEach((edge) => {
+        if (edge.source === nodeId) {
+          edgeId = edge.target;
+          return;
+        }
+      });
+    }
+    console.log("edgeId", edgeId);
 
     let relatedLabel: string | null = null;
     data.nodes.forEach((node) => {
-      if (node.id === sourceValue) {
+      if (node.id === edgeId) {
         relatedLabel = node.data.label;
         return;
       }
@@ -720,13 +776,19 @@ const Sidebar = (props: any) => {
         </Typography>
       </Box>
       <Divider variant="middle" />
-      <TextField
-        id="outlined-basic"
-        label="Node Name"
-        variant="outlined"
-        value={nodeName}
-        onChange={(evt) => setNodeName(evt.target.value)}
-      />
+
+      <FormGroup>
+        <TextField
+          id="outlined-basic"
+          label="Node Name"
+          variant="outlined"
+          value={nodeName}
+          onChange={(evt) => setNodeName(evt.target.value)}
+        />
+        {nodeSubtitle === "plan" && (
+          <FormControlLabel control={<Checkbox />} label="Initialization" />
+        )}
+      </FormGroup>
     </Box>
   );
 };

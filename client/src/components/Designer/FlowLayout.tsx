@@ -45,7 +45,7 @@ const keyMap = {
 
 const FlowLayout = (props: FlowProps) => {
   const spacePressed = useKeyPress(["Control+s", "Command+s"]);
-  const { edgeName, isDownloadActive, setdownloadClicked } = useEdgeNames();
+  const { edgeName, setNodeSubtitle } = useEdgeNames();
   const reactFlowWrapper = useRef(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -193,6 +193,7 @@ const FlowLayout = (props: FlowProps) => {
       };
 
       setNodes((nds) => nds.concat(newNode));
+      console.log("ondropsetNodes", reactFlowInstance.toObject());
     },
     [reactFlowInstance, setNodes]
   );
@@ -241,10 +242,10 @@ const FlowLayout = (props: FlowProps) => {
       });
     }
 
-    localStorage.setItem(
-      props.fileName,
-      JSON.stringify(reactFlowInstance.toObject())
-    );
+    // localStorage.setItem(
+    //   props.fileName,
+    //   JSON.stringify(reactFlowInstance.toObject())
+    // );
   }, [reactFlowInstance, props.fileName]);
 
   useEffect(() => {
@@ -266,7 +267,10 @@ const FlowLayout = (props: FlowProps) => {
   const onNodeClick = useCallback((event: any, element: Node | Edge) => {
     setSelectedNodeState(element.id);
     setNodeName(element.data.label);
+    const nodeSubtitle = element.data.subtitle;
+    setNodeSubtitle(nodeSubtitle);
 
+    console.log("nodeSubtitle", nodeSubtitle);
     console.log("clicked", element);
   }, []);
   const onNodeDoubleClick = useCallback((event: any, element: Node | Edge) => {
@@ -274,9 +278,9 @@ const FlowLayout = (props: FlowProps) => {
     console.log("double");
   }, []);
 
-  const handlers = {
-    SAVE_LAYOUT: () => console.log("saved"),
-  };
+  // const handlers = {
+  //   SAVE_LAYOUT: () => console.log("saved"),
+  // };
 
   return (
     <ReactFlowProvider>

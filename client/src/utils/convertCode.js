@@ -85,7 +85,7 @@ function convertEnvironmentModelToJava(environmentName, operationsArr) {
 
 }
 
-function convertAgentsToAslFile(agentName, planName){
+function convertAgentsToAslFile(agentName, aslFileMainList){
 
   let code = `// Agent ${agentName}
   /* Initial beliefs */
@@ -95,9 +95,14 @@ function convertAgentsToAslFile(agentName, planName){
   
   /* Initial goals */
   
-  /* Plans */
-  @${planName}
-  `;
+  /* Plans */\n`;
+
+  // Add plan names from aslFileMainList to the ASL code
+  aslFileMainList.forEach((aslData) => {
+    code += `  @${aslData.planName.replace(",", ";")}\n`;
+    code += `  +${aslData.beliefs}\n`;
+    code += ` <-${aslData.actions}\n`;
+  });
   return code;
 
 }
