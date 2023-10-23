@@ -140,9 +140,12 @@ const treeStructure: TreeNode[] = [
         files: [
           { type: "file", name: "Mas.mas" },
           { type: "file", name: "Environment.env" },
+          { type: "file", name: "Capability1.cap" },
+          { type: "file", name: "Capability2.cap" },
+          { type: "file", name: "Plan1.pln" },
+          { type: "file", name: "Plan2.pln" },
         ],
       },
-      { type: "file", name: "setup.js" },
     ],
   },
 ];
