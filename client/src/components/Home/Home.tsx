@@ -271,7 +271,6 @@ function Home(user: any) {
       }
       return value;
     });
-
     callApi("/api/sessions/createTree", "POST", {
       treeValue: treeData,
       userId: user.user.id,

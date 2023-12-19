@@ -21,11 +21,35 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useLocation } from "react-router-dom";
 import { ReactComponent as GoogleLogo } from "../../assets/google.svg";
 import GoogleAuth from "./GoogleAuth";
+import TermsAndConditions from "./TermsAndConditions";
 
 const theme = createTheme();
 
 function Login() {
   const location = useLocation();
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [isChecked, setIsChecked] = React.useState(false);
+  const [isTermsConfirmed, setIsTermsConfirmed] = React.useState(false);
+
+  const toggleTerms = () => {
+    console.log("terms" + isOpen);
+    setIsOpen(!isOpen);
+  };
+  const handleCheckboxChange = () => {
+    console.log("isChecked", isChecked);
+    let newState = !isChecked;
+    console.log("isChecked12", !isChecked);
+    setIsChecked(newState);
+    console.log("isChecked13", isChecked);
+    if (isChecked) {
+      setIsTermsConfirmed(true);
+    }
+  };
+  const handleAgree = () => {
+    setIsTermsConfirmed(true);
+    setIsChecked(true);
+    // console.log("confirm" + isTermsConfirmed);
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -68,8 +92,26 @@ function Login() {
             />
             <Grid container>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"You can login with Google Authentication for now."}
+                <TermsAndConditions
+                  isOpen={isOpen}
+                  handleClose={toggleTerms}
+                  onAgree={handleAgree}
+                />
+              </Grid>
+              <Grid item>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      value="accept"
+                      checked={isChecked}
+                      color="primary"
+                      onChange={handleCheckboxChange}
+                    />
+                  }
+                  label=""
+                />
+                <Link href="#" variant="body2" onClick={toggleTerms}>
+                  {"I accept the terms and conditions."}
                 </Link>
               </Grid>
             </Grid>
@@ -90,7 +132,7 @@ function Login() {
                 alignItems: "center",
               }}
             >
-              <GoogleAuth />
+              <GoogleAuth isTermsConfirmed={isTermsConfirmed} />
             </main>
           </Box>
         </Box>

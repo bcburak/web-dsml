@@ -21,6 +21,8 @@ const treeReducer = (state: any, action: TreeAction) => {
   let newState = _cloneDeep(state);
   let node = null;
   let parent = null;
+  const allowedExtensions = [".cap", ".env", ".mas", ".pln"];
+
   if (action.payload && action.payload.id) {
     let foundNode = searchDFS({
       data: newState,
@@ -39,7 +41,31 @@ const treeReducer = (state: any, action: TreeAction) => {
 
     case TreeActionTypes.FILECREATE:
       console.log("files", node.files);
-      console.log("fileNAme", action.payload.name);
+      console.log("fileNAme", action);
+
+      if (action.payload.name.includes(".")) {
+        let fileName = action.payload.name;
+        let newFileExtension = "." + fileName.split(".")[1];
+        if (!allowedExtensions.includes(newFileExtension)) {
+          alert(
+            "Invalid file extension. Allowed extensions are: .cap, .env, .mas, .pln"
+          );
+          return state;
+        }
+        // const newFileExtension = action.payload.name.slice(
+        //   ((action.payload.name.lastIndexOf(".") - 1) >>> 0) + 2
+        // );
+        // alert("new file" + newFileExtension);
+        // if (!allowedExtensions.includes(newFileExtension)) {
+        //   alert(
+        //     "Invalid file extension. Allowed extensions are: .cap, .env, .mas, .pln"
+        //   );
+        //   return { ...state, error: "Invalid file extension" };
+        // }
+      } else {
+        alert("You should create file with extension. e.g Garbage.env");
+        return state;
+      }
       node.files.push(createFile({ name: action.payload.name }));
       return newState;
 
