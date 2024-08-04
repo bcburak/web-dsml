@@ -391,7 +391,7 @@ function Home(user: any) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Web Flow DSML
+              LCDP4BDI
             </Typography>
 
             <div
